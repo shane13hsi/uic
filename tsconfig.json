@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "types": [
+      "reflect-metadata",
+      "react",
+      "react-dom"
+    ],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "jsx": "react",
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true
+  }
+}
