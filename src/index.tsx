@@ -7,15 +7,16 @@ import { Container } from 'inversify';
 import 'reflect-metadata';
 import { makeProvideDecorator } from 'inversify-binding-decorators';
 import getDecorators from 'inversify-inject-decorators';
+import LoginForm, { form } from './form';
 
 
-let container = new Container();
+let container = new Container({ defaultScope: "Singleton" });
 let provide = makeProvideDecorator(container);
 let { lazyInject } = getDecorators(container);
 
 
-@provide(AppState)
-class AppState {
+@provide(App)
+class App {
   @observable timer = 0;
 
   constructor() {
@@ -32,21 +33,23 @@ class AppState {
 
 @observer
 class TimerView extends React.Component<{}, {}> {
-  @lazyInject(AppState)
-  private appState: AppState;
+
+  @lazyInject(App)
+  private app: App;
 
   render() {
     return (
       <div>
         <button onClick={this.onReset}>
-          Seconds passed: {this.appState.timer}
+          Seconds passed: {this.app.timer}
         </button>
+        <LoginForm form={form}/>
       </div>
     );
   }
 
   onReset = () => {
-    this.appState.resetTimer();
+    this.app.resetTimer();
   }
 }
 

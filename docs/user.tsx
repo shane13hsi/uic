@@ -12,7 +12,7 @@ abstract class RemoteEntity {
 }
 
 @Entity
-class User extends RemoteEntity {
+class User extends Seriable {
 
   // 细粒度控制
   @Observable list: any[];
@@ -20,6 +20,9 @@ class User extends RemoteEntity {
   @Observable page: number;
 
   @Autowired private userRepository: UserRepository;
+
+
+
 
   // 只要是 async 的都要被 RemoteEntity 监听
   async fetch(page: number) {
@@ -48,13 +51,13 @@ class User extends RemoteEntity {
   async reload() {
     return this.fetch(this.page);
   }
-
 }
 
 // 在请求的时候
 @Repository
 class UserRepository {
 
+  @Loading
   async fetch(page) {
     return await request(`/api/users?_page=${page}&_limit=${20}`)
   }
@@ -64,7 +67,18 @@ class UserRepository {
       method: 'DELETE',
     });
   }
+
+  async  around(method, args) {
+    // 设置 Loading 为 true
+    this.loading[method.toString()] = true;
+    await method.apply(null, args);
+    // 设置 Loading 为 false
+
+    this.loading[method.toString()] = false;
+  }
 }
+
+
 
 // 监控使用的数据变化，强制 render
 @Component
