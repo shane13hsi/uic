@@ -79,7 +79,6 @@ class UserRepository {
 }
 
 
-
 // 监控使用的数据变化，强制 render
 @Component
 class MainView extends React.Component<any, any> {

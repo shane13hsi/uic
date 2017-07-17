@@ -2,21 +2,11 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import * as validatorjs from 'validatorjs';
 import MobxReactForm from 'mobx-react-form';
+import { lazyInject, provide } from './ioc';
 
-const fields = {
-  email: {
-    label: 'Email',
-    placeholder: 'Insert Email',
-    rules: 'required|email|string|between:5,25',
-  },
-  password: {
-    label: 'Password',
-    placeholder: 'Insert Password',
-    rules: 'required|string|between:5,25',
-  },
-};
-
+@provide(Form)
 class Form extends MobxReactForm {
+
   plugins() {
     return {
       dvr: {
@@ -36,32 +26,53 @@ class Form extends MobxReactForm {
   }
 }
 
-class LoginForm extends Form {}
-
-export const form = new LoginForm({ fields }, { name: "Login Form" });
-
-interface IFormProps {
-  form: any;
+@provide($LoginForm)
+class $LoginForm extends Form {
+  setup() {
+    return {
+      fields: {
+        email: {
+          label: 'Email',
+          placeholder: 'Insert Email',
+          rules: 'required|email|string|between:5,25',
+        },
+        password: {
+          label: 'Password',
+          placeholder: 'Insert Password',
+          rules: 'required|string|between:5,25',
+        },
+      }
+    }
+  }
 }
 
-export default observer(({ form }: IFormProps) => (
-  <form>
-    <label htmlFor={form.$('email').id}>
-      {form.$('email').label}
-    </label>
-    <input {...form.$('email').bind()} />
-    <p>{form.$('email').error}</p>
+@observer
+export class LoginForm extends React.Component<{}, {}> {
 
-    <label htmlFor={form.$('password').id}>
-      {form.$('password').label}
-    </label>
-    <input {...form.$('password').bind({ type: 'password' })} />
-    <p>{form.$('password').error}</p>
+  @lazyInject($LoginForm)
+  private form: $LoginForm;
 
-    <button type="submit" onClick={form.onSubmit}>Submit</button>
-    <button type="button" onClick={form.onReset}>Reset</button>
-    <button type="button" onClick={form.onClear}>Clear</button>
+  render() {
+    return (
+      <form>
+        <label htmlFor={this.form.$('email').id}>
+          {this.form.$('email').label}
+        </label>
+        <input {...this.form.$('email').bind()} />
+        <p>{this.form.$('email').error}</p>
 
-    <p>{form.error}</p>
-  </form>
-));
+        <label htmlFor={this.form.$('password').id}>
+          {this.form.$('password').label}
+        </label>
+        <input {...this.form.$('password').bind({ type: 'password' })} />
+        <p>{this.form.$('password').error}</p>
+
+        <button type="submit" onClick={this.form.onSubmit}>Submit</button>
+        <button type="button" onClick={this.form.onReset}>Reset</button>
+        <button type="button" onClick={this.form.onClear}>Clear</button>
+
+        <p>{this.form.error}</p>
+      </form>
+    )
+  }
+}

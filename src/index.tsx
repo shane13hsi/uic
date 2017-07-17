@@ -3,16 +3,8 @@ import * as ReactDOM from 'react-dom';
 
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
-import { Container } from 'inversify';
-import 'reflect-metadata';
-import { makeProvideDecorator } from 'inversify-binding-decorators';
-import getDecorators from 'inversify-inject-decorators';
-import LoginForm, { form } from './form';
-
-
-let container = new Container({ defaultScope: "Singleton" });
-let provide = makeProvideDecorator(container);
-let { lazyInject } = getDecorators(container);
+import { LoginForm } from './form';
+import { lazyInject, provide } from './ioc';
 
 
 @provide(App)
@@ -43,7 +35,7 @@ class TimerView extends React.Component<{}, {}> {
         <button onClick={this.onReset}>
           Seconds passed: {this.app.timer}
         </button>
-        <LoginForm form={form}/>
+        <LoginForm/>
       </div>
     );
   }

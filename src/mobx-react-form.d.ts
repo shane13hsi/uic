@@ -1,18 +1,35 @@
 declare module 'mobx-react-form' {
 
-  interface IFormOption {
-    name?: any;
-    options?: any;
-    plugins?: any;
-    bindings?: any;
-    onSubmit?: any;
-    onClear?: Function;
-    onReset?: Function;
+  interface I$RV {
+    bind: Function;
+    label: string;
+    id: string;
+    error: string;
+  }
+
+  interface ISetupRV {
+    fields: any;
+  }
+
+  export class Base {
+
   }
 
   class Form {
-    constructor(setup: any, opt?: IFormOption);
+
+    public error: any;
+
+    setup(): ISetupRV;
+
+    $(name: string): I$RV;
+
+    onSubmit();
+
+    onReset();
+
+    onClear();
+
   }
 
-  export = Form;
+  export default Form;
 }
