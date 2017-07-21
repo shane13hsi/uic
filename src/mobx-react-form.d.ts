@@ -7,10 +7,6 @@ declare module 'mobx-react-form' {
     error: string;
   }
 
-  interface ISetupRV {
-    fields: any;
-  }
-
   export class Base {
 
   }
@@ -18,8 +14,6 @@ declare module 'mobx-react-form' {
   class Form {
 
     public error: any;
-
-    setup(): ISetupRV;
 
     $(name: string): I$RV;
 

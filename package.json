@@ -6,6 +6,8 @@
   },
   "dependencies": {
     "decko": "^1.2.0",
+    "inferno": "^3.6.4",
+    "inferno-compat": "^3.6.4",
     "inversify": "^4.2.0",
     "inversify-binding-decorators": "^3.0.0",
     "inversify-inject-decorators": "^3.0.1",

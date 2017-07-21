@@ -13,6 +13,10 @@ module.exports = {
     publicPath: '/static/'
   },
   resolve: {
+    alias: {
+      'react': 'inferno-compat',
+      'react-dom': 'inferno-compat'
+    },
     extensions: ['.webpack.js', '.web.js', '.js', '.ts', '.tsx']
   },
   module: {
