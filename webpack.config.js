@@ -13,12 +13,22 @@ module.exports = {
     publicPath: '/static/'
   },
   resolve: {
-    alias: {
+    /*alias: {
       'react': 'inferno-compat',
       'react-dom': 'inferno-compat'
-    },
+     },*/
     extensions: ['.webpack.js', '.web.js', '.js', '.ts', '.tsx']
   },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.DllReferencePlugin({
+      context: __dirname,
+      /**
+       * 在这里引入 manifest 文件
+       */
+      manifest: require('./dist/vendor-manifest.json')
+    })
+  ],
   module: {
     rules: [
       {
@@ -28,6 +38,13 @@ module.exports = {
             loader: 'ts-loader',
             options: { transpileOnly: true }
           }
+        ]
+      },
+      {
+        test: /\.css/,
+        use: [
+          'style-loader',
+          'css-loader'
         ]
       }
     ]

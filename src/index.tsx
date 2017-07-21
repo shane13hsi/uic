@@ -5,7 +5,7 @@ import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { LoginForm } from './form';
 import { lazyInject, provide } from './ioc';
-
+import './antd';
 
 @provide(App)
 class App {

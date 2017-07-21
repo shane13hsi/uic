@@ -3,9 +3,22 @@ import { observer } from 'mobx-react';
 import * as validatorjs from 'validatorjs';
 import MobxReactForm from '@uic/mobx-react-form';
 import { lazyInject, provide } from './ioc';
+import { Button, Form, Input } from './antd';
+import { computed } from 'mobx';
 
-@provide(Form)
-class Form extends MobxReactForm {
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 8 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 16 },
+  },
+};
+
+@provide($Form)
+class $Form extends MobxReactForm {
 
   plugins() {
     return {
@@ -16,28 +29,51 @@ class Form extends MobxReactForm {
   }
 
   onSuccess(form) {
-    alert('see console');
+    // alert('see console');
     console.log('Form Values', form.values());
   }
 
   onError(form) {
-    alert('see console');
+    // alert('see console');
     console.log('Form Errors', form.errors());
   }
 }
 
 @provide($LoginForm)
-class $LoginForm extends Form {
+class $LoginForm extends $Form {
+
+  /**
+   * TODO: 使用 computed 值
+   *
+   * @param name
+   * @returns {any}
+   */
+  validateStatus(name: string) {
+    const f = this.$(name);
+    if (f.isPristine) {
+      return undefined;
+    } else if (f.validating) {
+      return 'validating';
+    } else if (f.isValid) {
+      return 'success';
+    } else {
+      return 'error';
+    }
+  }
+
+  @computed get isLoading() {
+    return this.fields.size === 0;
+  }
 }
 
 @observer
 export class LoginForm extends React.Component<{}, {}> {
 
   @lazyInject($LoginForm)
-  private $loginForm: $LoginForm;
+  private form: $LoginForm;
 
   componentDidMount() {
-    this.$loginForm.init({
+    this.form.init({
       email: {
         label: 'Email',
         placeholder: 'Insert Email',
@@ -52,27 +88,36 @@ export class LoginForm extends React.Component<{}, {}> {
   }
 
   render() {
-    if (this.$loginForm.fields.size === 0) return (<div>Loading</div>);
+    if (this.form.isLoading) return (<div>Loading</div>);
+
     return (
-      <form>
-        <label htmlFor={this.$loginForm.$('email').id}>
-          {this.$loginForm.$('email').label}
-        </label>
-        <input {...this.$loginForm.$('email').bind()} />
-        <p>{this.$loginForm.$('email').error}</p>
+      <Form>
+        <Form.Item {...formItemLayout}
+                   label={this.form.$('email').label}
+                   help={this.form.$('email').error}
+                   validateStatus={this.form.validateStatus('email')}>
+          <Input {...this.form.$('email').bind()} />
+        </Form.Item>
 
-        <label htmlFor={this.$loginForm.$('password').id}>
-          {this.$loginForm.$('password').label}
-        </label>
-        <input {...this.$loginForm.$('password').bind({ type: 'password' })} />
-        <p>{this.$loginForm.$('password').error}</p>
+        <Form.Item {...formItemLayout}
+                   label={this.form.$('password').label}
+                   help={this.form.$('password').error}
+                   validateStatus={this.form.validateStatus('password')}>
+          <Input {...this.form.$('password').bind({ type: 'password' })} />
+        </Form.Item>
 
-        <button type="submit" onClick={this.$loginForm.onSubmit}>Submit</button>
-        <button type="button" onClick={this.$loginForm.onReset}>Reset</button>
-        <button type="button" onClick={this.$loginForm.onClear}>Clear</button>
-
-        <p>{this.$loginForm.error}</p>
-      </form>
+        <Form.Item
+          wrapperCol={{
+            xs: { span: 24, offset: 0 },
+            sm: { span: 16, offset: 8 },
+          }}>
+          <Button type="primary" onClick={this.form.onSubmit}>Submit</Button>
+          &nbsp;&nbsp;
+          <Button onClick={this.form.onReset}>Reset</Button>
+          &nbsp;&nbsp;
+          <Button onClick={this.form.onClear}>Clear</Button>
+        </Form.Item>
+      </Form>
     )
   }
 }

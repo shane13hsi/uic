@@ -5,6 +5,9 @@ declare module '@uic/mobx-react-form' {
     label: string;
     id: string;
     error: string;
+    isValid: boolean;
+    validating: boolean;
+    isPristine: boolean;
   }
 
   export class Base {
