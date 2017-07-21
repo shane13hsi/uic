@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import * as validatorjs from 'validatorjs';
-import MobxReactForm from 'mobx-react-form';
+import MobxReactForm from '@uic/mobx-react-form';
 import { lazyInject, provide } from './ioc';
 
 @provide(Form)

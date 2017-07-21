@@ -1,4 +1,4 @@
-declare module 'mobx-react-form' {
+declare module '@uic/mobx-react-form' {
 
   interface I$RV {
     bind: Function;
