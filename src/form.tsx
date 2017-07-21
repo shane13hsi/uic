@@ -28,50 +28,50 @@ class Form extends MobxReactForm {
 
 @provide($LoginForm)
 class $LoginForm extends Form {
-  setup() {
-    return {
-      fields: {
-        email: {
-          label: 'Email',
-          placeholder: 'Insert Email',
-          rules: 'required|email|string|between:5,25',
-        },
-        password: {
-          label: 'Password',
-          placeholder: 'Insert Password',
-          rules: 'required|string|between:5,25',
-        },
-      }
-    }
-  }
 }
 
 @observer
 export class LoginForm extends React.Component<{}, {}> {
 
   @lazyInject($LoginForm)
-  private form: $LoginForm;
+  private $loginForm: $LoginForm;
+
+  componentDidMount() {
+    this.$loginForm.init({
+      email: {
+        label: 'Email',
+        placeholder: 'Insert Email',
+        rules: 'required|email|string|between:5,25',
+      },
+      password: {
+        label: 'Password',
+        placeholder: 'Insert Password',
+        rules: 'required|string|between:5,25',
+      },
+    })
+  }
 
   render() {
+    if (this.$loginForm.fields.size === 0) return (<div>Loading</div>);
     return (
       <form>
-        <label htmlFor={this.form.$('email').id}>
-          {this.form.$('email').label}
+        <label htmlFor={this.$loginForm.$('email').id}>
+          {this.$loginForm.$('email').label}
         </label>
-        <input {...this.form.$('email').bind()} />
-        <p>{this.form.$('email').error}</p>
+        <input {...this.$loginForm.$('email').bind()} />
+        <p>{this.$loginForm.$('email').error}</p>
 
-        <label htmlFor={this.form.$('password').id}>
-          {this.form.$('password').label}
+        <label htmlFor={this.$loginForm.$('password').id}>
+          {this.$loginForm.$('password').label}
         </label>
-        <input {...this.form.$('password').bind({ type: 'password' })} />
-        <p>{this.form.$('password').error}</p>
+        <input {...this.$loginForm.$('password').bind({ type: 'password' })} />
+        <p>{this.$loginForm.$('password').error}</p>
 
-        <button type="submit" onClick={this.form.onSubmit}>Submit</button>
-        <button type="button" onClick={this.form.onReset}>Reset</button>
-        <button type="button" onClick={this.form.onClear}>Clear</button>
+        <button type="submit" onClick={this.$loginForm.onSubmit}>Submit</button>
+        <button type="button" onClick={this.$loginForm.onReset}>Reset</button>
+        <button type="button" onClick={this.$loginForm.onClear}>Clear</button>
 
-        <p>{this.form.error}</p>
+        <p>{this.$loginForm.error}</p>
       </form>
     )
   }

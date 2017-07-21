@@ -7,4 +7,3 @@ import './third-party';
 export let container = new Container({ defaultScope: "Singleton" });
 export let provide = makeProvideDecorator(container);
 export let { lazyInject } = getDecorators(container);
-

@@ -29,6 +29,10 @@ declare module 'mobx-react-form' {
 
     onClear();
 
+    init(fields: any);
+
+    fields: Map<any, any>;
+
   }
 
   export default Form;
