@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { observer } from 'mobx-react';
 import * as validatorjs from 'validatorjs';
-import MobxReactForm from '@uic/mobx-react-form';
-import { lazyInject, provide } from './ioc';
+import { lazyInject, provide } from './uic/ioc';
 import { Button, Form, Input } from './antd';
-import { computed } from 'mobx';
+import { computed, MobxReactForm, observer } from './uic';
 
 const formItemLayout = {
   labelCol: {

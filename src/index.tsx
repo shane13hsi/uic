@@ -1,10 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { observable } from 'mobx';
-import { observer } from 'mobx-react';
+import { observable, observer } from './uic';
 import { LoginForm } from './form';
-import { lazyInject, provide } from './ioc';
+import { lazyInject, provide } from './uic/ioc';
 import './antd';
 
 @provide(App)

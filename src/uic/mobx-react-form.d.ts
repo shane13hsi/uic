@@ -14,7 +14,7 @@ declare module '@uic/mobx-react-form' {
 
   }
 
-  class Form {
+  export class Form {
 
     public error: any;
 
@@ -29,8 +29,6 @@ declare module '@uic/mobx-react-form' {
     init(fields: any);
 
     fields: Map<any, any>;
-
   }
 
-  export default Form;
 }
