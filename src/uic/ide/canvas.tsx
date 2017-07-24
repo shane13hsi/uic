@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, Rate, UndefinedComponent } from '../antd';
+import { Card, Rate, UndefinedComponent } from '../antd/antd';
 import { GridLayoutContext } from '../grid-layout/grid-layout-context';
 import { UISchemaToJSX } from '../uischema-to-jsx/uischema-to-jsx';
 

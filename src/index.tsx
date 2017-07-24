@@ -1,5 +1,4 @@
 import 'jquery';
-import './uic/antd';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { GLApp } from './uic/ide/gl-app';

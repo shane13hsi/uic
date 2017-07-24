@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as GoldenLayout from 'golden-layout';
 import { Canvas } from './canvas';
+import { PropertyForm } from './property-form';
 
 class TestComponent extends React.Component<any, {}> {
 
@@ -48,9 +49,8 @@ export class GLApp extends React.Component<{}, {}> {
             {
               title: '属性编辑',
               type: 'react-component',
-              component: 'TestComponent',
-              width: 2,
-              props: { label: 'C' }
+              component: 'PropertyForm',
+              width: 2
             }
           ]
         }
@@ -59,6 +59,7 @@ export class GLApp extends React.Component<{}, {}> {
     const glLayout = new GoldenLayout(glConfig, this.node);
     glLayout.registerComponent('TestComponent', TestComponent);
     glLayout.registerComponent('Canvas', Canvas);
+    glLayout.registerComponent('PropertyForm', PropertyForm);
     glLayout.init();
   }
 
