@@ -1,20 +1,12 @@
 var path = require('path');
 var webpack = require('webpack');
+var _ = require('lodash');
+
+var deps = require('./package.json').dependencies;
 
 module.exports = {
   entry: {
-    vendor: [
-      '@uic/mobx-react-form',
-      'antd',
-      'decko',
-      'inversify',
-      'inversify-binding-decorators',
-      'inversify-inject-decorators',
-      'mobx',
-      'mobx-react',
-      'reflect-metadata',
-      'validatorjs',
-    ],
+    vendor: _.pull(_.keys(deps), []),
   },
   output: {
     path: path.join(__dirname, 'dist'),

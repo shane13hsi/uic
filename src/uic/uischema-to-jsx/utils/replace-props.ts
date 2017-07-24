@@ -7,9 +7,7 @@ import {
   isState
 } from './index';
 import { IHandlers, IReactProps } from '../interfaces';
-var get = require('lodash.get');
-var toPath = require('lodash.topath');
-var reduce = require('lodash.reduce');
+import { get, reduce, toPath } from 'lodash';
 
 function processValue(value: string, data: any, handlers: IHandlers): any {
   if (isImmediateFunction(value)) {

@@ -1,4 +1,4 @@
-var isString = require('lodash.isstring');
+import { isString } from 'lodash';
 
 export function isState(value: string): boolean {
   if (isString(value) && value.startsWith("$")) {

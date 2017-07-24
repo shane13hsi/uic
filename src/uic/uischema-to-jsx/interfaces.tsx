@@ -27,5 +27,5 @@ export interface IUISchemaItem {
    * 属性
    *
    */
-  props: IReactProps;
+  props: any & IReactProps;
 }
