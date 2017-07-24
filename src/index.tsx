@@ -1,8 +1,8 @@
 import 'jquery';
-import './antd';
+import './uic/antd';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { GLApp } from './gl-app';
+import { GLApp } from './uic/ide/gl-app';
 
 declare var window: any;
 window.React = React;

@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Card, Rate, UndefinedComponent } from './antd';
-import { GridLayoutContext, UISchemaToJSX } from './uic';
+import { Card, Rate, UndefinedComponent } from '../antd';
+import { GridLayoutContext } from '../grid-layout/grid-layout-context';
+import { UISchemaToJSX } from '../uischema-to-jsx/uischema-to-jsx';
 
 const map = {
   Rate,

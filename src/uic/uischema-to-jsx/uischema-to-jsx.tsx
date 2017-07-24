@@ -3,7 +3,8 @@ import { IUISchemaToJSXProps } from './uischema-to-jsx.props';
 import { isValidUISchema } from './utils';
 import { replaceProps } from './utils/replace-props';
 import { IUISchemaItem } from './interfaces';
-import { Grid, GridItem } from '../grid-layout';
+import { GridItem } from '../grid-layout/grid-item';
+import { Grid } from '../grid-layout/grid';
 
 export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly<{}>> {
   constructor(props, context) {
