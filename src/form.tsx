@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as validatorjs from 'validatorjs';
-import { lazyInject, provide } from './uic/ioc';
 import { Button, Form, Input } from './antd';
-import { computed, MobxReactForm, observer } from './uic';
+import { computed, lazyInject, MobxReactForm, observer, provide } from './uic';
 
 const formItemLayout = {
   labelCol: {
