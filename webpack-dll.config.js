@@ -12,10 +12,8 @@ module.exports = {
       'inversify-inject-decorators',
       'mobx',
       'mobx-react',
-      'react',
-      'react-dom',
       'reflect-metadata',
-      'validatorjs'
+      'validatorjs',
     ],
   },
   output: {

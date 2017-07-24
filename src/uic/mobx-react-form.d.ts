@@ -16,8 +16,6 @@ declare module '@uic/mobx-react-form' {
 
   export class Form {
 
-    public error: any;
-
     $(name: string): I$RV;
 
     onSubmit();

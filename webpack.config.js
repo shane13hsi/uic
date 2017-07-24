@@ -48,5 +48,11 @@ module.exports = {
         ]
       }
     ]
+  },
+  externals: {
+    'golden-layout': 'GoldenLayout',
+    'jquery': 'jQuery',
+    'react': 'React',
+    'react-dom': 'ReactDOM'
   }
 };
