@@ -32,33 +32,26 @@ export class GridItem extends React.Component<any, any> {
 
   static contextTypes = {
     layout: React.PropTypes.object
-  }
+  };
 
   onClick(e) {
-    // if (this.props.onItemActive) {
-    //   e.stopPropagation()
-    //   this.props.onItemActive(this.props.itemKey, this.props.gridKey)
-    // }
-
-    const { layout } = this.context
+    const { layout } = this.context;
     if (layout) {
-      e.stopPropagation()
+      e.stopPropagation();
       layout.setActiveItem(this.props.itemKey, this.props.gridKey)
     }
   }
 
   onHover(e) {
-    const { layout } = this.context
-    e.stopPropagation()
-    // let overKeys = this.props.overKeys.slice()
-    // overKeys.push(this.props.itemKey)
+    const { layout } = this.context;
+    e.stopPropagation();
     if (layout) {
       layout.changeMouse([this.props.itemKey])
     }
   }
 
   onLeave() {
-    const { layout } = this.context
+    const { layout } = this.context;
     if (layout) {
       layout.changeMouse([])
     }
@@ -71,12 +64,11 @@ export class GridItem extends React.Component<any, any> {
   }
 
   render() {
-    const { itemKey } = this.props
-    const { overItemKeys, activeItem } = this.context.layout
-    const currentOverKey = overItemKeys && overItemKeys.length > 0 ? overItemKeys[overItemKeys.length - 1] : null
+    const { itemKey } = this.props;
+    const { overItemKeys, activeItem } = this.context.layout;
+    const currentOverKey = overItemKeys && overItemKeys.length > 0 ? overItemKeys[overItemKeys.length - 1] : null;
     return (
       <Item
-        onMouseOver={this.onHover.bind(this)}
         onClick={this.onClick.bind(this)}
         active={(currentOverKey === itemKey && activeItem !== itemKey || activeItem === itemKey) && itemKey !== 'root'}
         move={!(!this.props.className || ( this.props.className && this.props.className.indexOf('static') > -1 ))}

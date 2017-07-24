@@ -4,9 +4,10 @@ var _ = require('lodash');
 
 var deps = require('./package.json').dependencies;
 
+
 module.exports = {
   entry: {
-    vendor: _.pull(_.keys(deps), []),
+    vendor: _.pull(_.keys(deps), 'react-grid-layout'),
   },
   output: {
     path: path.join(__dirname, 'dist'),

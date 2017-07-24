@@ -11,6 +11,8 @@ export interface IUISchemaToJSXProps {
    */
   uiSchema?: IUISchemaItem[];
 
+  layoutSchema?: any;
+
   /**
    * 根据 component 名称获取 React Class
    *

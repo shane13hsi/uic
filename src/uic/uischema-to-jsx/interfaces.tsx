@@ -11,6 +11,8 @@ export type IReactProps = {
  *
  */
 export interface IUISchemaItem {
+
+  _id: string;
   /**
    * component 名称
    *
