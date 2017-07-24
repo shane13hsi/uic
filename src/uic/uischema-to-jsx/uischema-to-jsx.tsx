@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { IResolveUIProps } from './resolve-ui.props';
+import { IUISchemaToJSXProps } from './uischema-to-jsx.props';
 import { isValidUISchema } from './utils';
 import { replaceProps } from './utils/replace-props';
 import { IUISchemaItem } from './interfaces';
 
-export class ResolveUI extends React.Component<IResolveUIProps, Readonly<{}>> {
+export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly<{}>> {
   constructor(props, context) {
     super(props, context);
   }
@@ -19,7 +19,7 @@ export class ResolveUI extends React.Component<IResolveUIProps, Readonly<{}>> {
       if (isValidUISchema(item.props.children)) {
         return (
           <Component key={idx} {...nextProps}>
-            <ResolveUI uiSchema={item.props.children} getComponent={getComponent}/>
+            <UISchemaToJSX uiSchema={item.props.children} getComponent={getComponent}/>
           </Component>
         )
       } else {

@@ -5,7 +5,7 @@ import { IHandlers, IUISchemaItem } from './interfaces';
  * IResolveUIProps
  *
  */
-export interface IResolveUIProps {
+export interface IUISchemaToJSXProps {
   /**
    * uiSchema
    */
