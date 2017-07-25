@@ -34,6 +34,7 @@ const uiSchema = [
         {
           "_id": "12",
           "component": "Rate",
+          "component_ref": "#123",
           "props": {
             "defaultValue": 4,
           }
@@ -61,3 +62,15 @@ export class Canvas extends React.Component<{}, {}> {
     )
   }
 }
+
+/**
+ * Form 表单 数据
+ * XXForm
+ * X2Form
+ *
+ * 其他组件
+ * uiSchema: {
+ *
+ * }
+ */
+
