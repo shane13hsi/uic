@@ -46,6 +46,23 @@ module.exports = {
           'style-loader',
           'css-loader'
         ]
+      },
+      {
+        test: /\.less/,
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'less-loader',
+            options: {
+              modifyVars: {
+                'border-radius-base': '1px',
+                'border-radius-sm': '0px',
+                'form-item-margin-bottom': '10px'
+              }
+            }
+          }
+        ]
       }
     ]
   }

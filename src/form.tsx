@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as validatorjs from 'validatorjs';
-import { Button, Form, Input } from './antd';
+import { Button, Form, Input } from './uic/antd/antd';
 import { computed, lazyInject, MobxReactForm, observer, provide } from './uic';
 
 const formItemLayout = {

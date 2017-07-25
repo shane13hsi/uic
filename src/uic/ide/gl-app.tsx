@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as GoldenLayout from 'golden-layout';
 import { Canvas } from './canvas';
 import { PropertyForm } from './property-form';
+import { PageTree } from './page-tree';
 
 class TestComponent extends React.Component<any, {}> {
 
@@ -35,8 +36,7 @@ export class GLApp extends React.Component<{}, {}> {
                 {
                   title: '页面',
                   type: 'react-component',
-                  component: 'TestComponent',
-                  props: { label: 'B' }
+                  component: 'PageTree',
                 }
               ]
             },
@@ -60,6 +60,7 @@ export class GLApp extends React.Component<{}, {}> {
     glLayout.registerComponent('TestComponent', TestComponent);
     glLayout.registerComponent('Canvas', Canvas);
     glLayout.registerComponent('PropertyForm', PropertyForm);
+    glLayout.registerComponent('PageTree', PageTree);
     glLayout.init();
   }
 

@@ -1,3 +1,4 @@
+import './grid.css';
 import * as React from 'react';
 import styled from 'styled-components';
 import sizeMe from 'react-sizeme';

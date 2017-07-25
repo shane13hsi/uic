@@ -1,0 +1,4 @@
+.ant-tree.ant-tree-show-line li span.ant-tree-switcher {
+  background: transparent;
+  color: rgba(0, 0, 0, 0.65);
+}

@@ -7,7 +7,7 @@ var deps = require('./package.json').dependencies;
 
 module.exports = {
   entry: {
-    vendor: _.pull(_.keys(deps), 'react-grid-layout'),
+    vendor: _.pull(_.keys(deps)),
   },
   output: {
     path: path.join(__dirname, 'dist'),
@@ -20,15 +20,7 @@ module.exports = {
     library: '[name]_library'
   },
   module: {
-    rules: [
-      {
-        test: /\.css/,
-        use: [
-          'style-loader',
-          'css-loader'
-        ]
-      }
-    ]
+    rules: []
   },
   plugins: [
     new webpack.DllPlugin({
