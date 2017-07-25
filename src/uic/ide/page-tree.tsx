@@ -6,6 +6,7 @@ import { observer } from 'mobx-react';
 import { lazyInject } from '../core/ioc';
 import { $PageTree } from './models/$page-tree';
 import { toJS } from 'mobx';
+import { $PreviewTabs } from './models/$preview-tabs';
 
 // dao
 // model
@@ -20,8 +21,19 @@ export class PageTree extends React.Component<{}, {}> {
   @lazyInject($PageTree)
   private $pageTree: $PageTree;
 
+  @lazyInject($PreviewTabs)
+  private $previewTabs: $PreviewTabs;
+
   componentDidMount() {
     this.$pageTree.loadPageTree('pageList');
+  }
+
+  @bind
+  handleSelect(selectedKeys: any[], e: { selected: boolean, selectedNodes, node, event }) {
+    if (e.node.props.isLeaf) {
+      const { eventKey, title } = e.node.props;
+      this.$previewTabs.handleClickPage(eventKey, title);
+    }
   }
 
   @bind
@@ -29,12 +41,14 @@ export class PageTree extends React.Component<{}, {}> {
     return treeList.map(item => {
       if (Array.isArray(item.children)) {
         return (
-          <TreeNode title={item.title} key={item.id}>
+          <TreeNode title={item.title}
+                    key={item.id}
+          >
             {this.treeNodeRender(item.children)}
           </TreeNode>
         )
       } else {
-        return <TreeNode title={item.title} key={item.id}/>
+        return <TreeNode isLeaf={true} title={item.title} key={item.id}/>
       }
     });
   }
@@ -42,7 +56,8 @@ export class PageTree extends React.Component<{}, {}> {
   render() {
     return (
       <Scroll>
-        <Tree showLine>
+        <Tree showLine
+              onSelect={this.handleSelect}>
           {this.treeNodeRender(toJS(this.$pageTree.pageTree))}
         </Tree>
       </Scroll>

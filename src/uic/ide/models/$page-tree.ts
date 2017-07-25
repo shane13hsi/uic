@@ -7,7 +7,7 @@ export class $PageTree {
 
   @observable pageTree = [];
 
-  @action.bound
+  @action
   loadPageTree(id: string) {
     db.get(id).then((doc: any) => {
       this.pageTree = doc.pageList;
