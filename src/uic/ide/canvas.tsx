@@ -35,7 +35,7 @@ const uiSchema = [
           "_id": "12",
           "component": "Rate",
           "props": {
-            "defaultValue": 4
+            "defaultValue": 4,
           }
         }
       ]

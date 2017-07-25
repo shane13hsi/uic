@@ -3,6 +3,7 @@ import * as GoldenLayout from 'golden-layout';
 import { Canvas } from './canvas';
 import { PropertyForm } from './property-form';
 import { PageTree } from './page-tree';
+import { ComponentsList } from './components-list';
 
 class TestComponent extends React.Component<any, {}> {
 
@@ -30,8 +31,7 @@ export class GLApp extends React.Component<{}, {}> {
                 {
                   title: '组件库',
                   type: 'react-component',
-                  component: 'TestComponent',
-                  props: { label: 'A' }
+                  component: 'ComponentsList',
                 },
                 {
                   title: '页面',
@@ -61,6 +61,7 @@ export class GLApp extends React.Component<{}, {}> {
     glLayout.registerComponent('Canvas', Canvas);
     glLayout.registerComponent('PropertyForm', PropertyForm);
     glLayout.registerComponent('PageTree', PageTree);
+    glLayout.registerComponent('ComponentsList', ComponentsList);
     glLayout.init();
   }
 

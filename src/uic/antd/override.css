@@ -1,4 +1,22 @@
+/* 页面树 */
 .ant-tree.ant-tree-show-line li span.ant-tree-switcher {
   background: transparent;
   color: rgba(0, 0, 0, 0.65);
+}
+
+/* 组件树 */
+.ant-collapse-borderless {
+  background-color: #E1E1E1;
+}
+
+.ant-collapse > .ant-collapse-item > .ant-collapse-header {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content {
+  background-color: #EAEAEA;
+}
+
+.ant-collapse-borderless > .ant-collapse-item > .ant-collapse-header:hover {
+  background-color: #CECECE;
 }

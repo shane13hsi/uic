@@ -1,7 +1,7 @@
 import 'antd/dist/antd.less';
 import './override.css';
 import * as React from 'react';
-export { Form, Icon, Input, Button, Card, Rate, Tree, Checkbox, Switch, Tooltip } from 'antd';
+export { Form, Icon, Input, Button, Card, Rate, Tree, Checkbox, Switch, Tooltip, Collapse, Row, Col, Popover } from 'antd';
 
 export function UndefinedComponent(props) {
   return (
