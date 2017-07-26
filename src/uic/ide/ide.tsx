@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { GLApp } from './gl-app';
+import { ToolBar } from './tool-bar';
 
 export class IDE extends React.Component<{}, {}> {
 
@@ -10,6 +11,7 @@ export class IDE extends React.Component<{}, {}> {
   render() {
     return (
       <div>
+        <ToolBar/>
         <div id="golden-layout"></div>
       </div>
     )

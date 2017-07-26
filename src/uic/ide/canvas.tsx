@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Card, Rate, UndefinedComponent } from '../antd/antd';
 import { GridLayoutContext } from '../grid-layout/grid-layout-context';
 import { observer } from 'mobx-react';
+import { UISchemaToJSX } from '../uischema-to-jsx/uischema-to-jsx';
 
 const map = {
   Rate,
@@ -34,7 +35,6 @@ const uiSchema = [
         {
           "_id": "12",
           "component": "Rate",
-          "component_ref": "#123",
           "props": {
             "defaultValue": 4,
           }
@@ -56,10 +56,9 @@ export class Canvas extends React.Component<{}, {}> {
   render() {
     return (
       <GridLayoutContext>
-        <h1>123</h1>
-        {/*<UISchemaToJSX uiSchema={uiSchema}
+        <UISchemaToJSX uiSchema={uiSchema}
                        layoutSchema={layoutSchema}
-         getComponent={getComponent}/>*/}
+                       getComponent={getComponent}/>
       </GridLayoutContext>
     )
   }

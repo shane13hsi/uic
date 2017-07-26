@@ -30,7 +30,9 @@ export class PageTree extends React.Component<{}, {}> {
   handleSelect(selectedKeys: any[], e: { selected: boolean, selectedNodes, node, event }) {
     if (e.node.props.isLeaf) {
       const { eventKey, title } = e.node.props;
+      // 新建标签
       GLApp.instance.addOrSetActiveWithinCanvas(eventKey, title);
+
     }
   }
 
