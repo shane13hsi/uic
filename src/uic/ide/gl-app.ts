@@ -48,7 +48,6 @@ export class GLApp {
       this.glLayout.registerComponent('ComponentsList', ComponentsList);
 
       this.glLayout.init();
-      this.hackMaxmizeOfStack();
 
       this.glLayout.on('stateChanged', () => {
         this.saveState(JSON.stringify(this.glLayout.toConfig()));
@@ -56,29 +55,7 @@ export class GLApp {
 
       this.glLayout.on('itemDestroyed', (a) => {
         this.removeCanvasMap(a.config.id);
-        this.hackMaxmizeOfStack();
       });
-
-      this.glLayout.on('itemCreated', () => {
-        this.hackMaxmizeOfStack(true);
-      });
-    }
-  }
-
-  /**
-   * stack 没有 items 的时候，maxmize 的行为不对
-   * 暂收 hack 掉
-   *
-   * @param force itemCreated 的时全部显示（DOM 慢）
-   */
-  private hackMaxmizeOfStack(force?: boolean) {
-    for (let item of $('.lm_stack')) {
-      // 有 items，则显示
-      if ($(item).find('.lm_items').children().length !== 0 || force) {
-        $(item).find('.lm_maximise').show()
-      } else { // 则隐藏
-        $(item).find('.lm_maximise').hide()
-      }
     }
   }
 
