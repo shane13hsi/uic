@@ -1,0 +1,44 @@
+{
+  "settings": {
+    "showPopoutIcon": false
+  },
+  "content": [
+    {
+      "type": "row",
+      "isClosable": false,
+      "reorderEnabled": false,
+      "content": [
+        {
+          "type": "column",
+          "width": 2,
+          "content": [
+            {
+              "title": "组件库",
+              "type": "react-component",
+              "component": "ComponentsList"
+            },
+            {
+              "title": "页面",
+              "type": "react-component",
+              "component": "PageTree"
+            }
+          ]
+        },
+        {
+          "id": "canvas",
+          "type": "stack",
+          "width": 6,
+          "isClosable": false,
+          "content": [
+          ]
+        },
+        {
+          "title": "属性编辑",
+          "type": "react-component",
+          "component": "PropertyForm",
+          "width": 2
+        }
+      ]
+    }
+  ]
+}

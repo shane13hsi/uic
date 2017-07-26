@@ -2,8 +2,6 @@ import * as React from 'react';
 import { Card, Rate, UndefinedComponent } from '../antd/antd';
 import { GridLayoutContext } from '../grid-layout/grid-layout-context';
 import { observer } from 'mobx-react';
-import { $PreviewTabs } from './models/$preview-tabs';
-import { lazyInject } from '../index';
 
 const map = {
   Rate,
@@ -55,13 +53,10 @@ const layoutSchema = {
 @observer
 export class Canvas extends React.Component<{}, {}> {
 
-  @lazyInject($PreviewTabs)
-  private $previewTabs: $PreviewTabs;
-
   render() {
     return (
       <GridLayoutContext>
-        <h1>{this.$previewTabs.activeTabTitle}</h1>
+        <h1>123</h1>
         {/*<UISchemaToJSX uiSchema={uiSchema}
                        layoutSchema={layoutSchema}
          getComponent={getComponent}/>*/}

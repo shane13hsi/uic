@@ -6,7 +6,7 @@ import { observer } from 'mobx-react';
 import { lazyInject } from '../core/ioc';
 import { $PageTree } from './models/$page-tree';
 import { toJS } from 'mobx';
-import { $PreviewTabs } from './models/$preview-tabs';
+import { GLApp } from './gl-app';
 
 // dao
 // model
@@ -21,8 +21,6 @@ export class PageTree extends React.Component<{}, {}> {
   @lazyInject($PageTree)
   private $pageTree: $PageTree;
 
-  @lazyInject($PreviewTabs)
-  private $previewTabs: $PreviewTabs;
 
   componentDidMount() {
     this.$pageTree.loadPageTree('pageList');
@@ -32,7 +30,7 @@ export class PageTree extends React.Component<{}, {}> {
   handleSelect(selectedKeys: any[], e: { selected: boolean, selectedNodes, node, event }) {
     if (e.node.props.isLeaf) {
       const { eventKey, title } = e.node.props;
-      this.$previewTabs.handleClickPage(eventKey, title);
+      GLApp.instance.addOrSetActiveWithinCanvas(eventKey, title);
     }
   }
 
@@ -42,8 +40,7 @@ export class PageTree extends React.Component<{}, {}> {
       if (Array.isArray(item.children)) {
         return (
           <TreeNode title={item.title}
-                    key={item.id}
-          >
+                    key={item.id}>
             {this.treeNodeRender(item.children)}
           </TreeNode>
         )
