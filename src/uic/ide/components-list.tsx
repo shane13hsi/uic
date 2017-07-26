@@ -3,8 +3,10 @@ import { Col, Collapse, Popover, Row } from '../antd/antd';
 import { bind } from 'decko';
 import { findDOMNode } from 'react-dom';
 import { Scroll } from './components/scroll';
+// import { createItem } from '../grid-layout/utils/create-item';
 
 const Panel = Collapse.Panel;
+// const Item = createItem("grid-target");
 
 const text = `
   A dog is a type of domesticated animal.

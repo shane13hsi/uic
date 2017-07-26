@@ -11,6 +11,8 @@ export interface IUISchemaToJSXProps {
    */
   uiSchema?: IUISchemaItem[];
 
+  parentUiSchema?: IUISchemaItem[];
+
   layoutSchema?: any;
 
   /**

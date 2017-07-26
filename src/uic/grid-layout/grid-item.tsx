@@ -50,13 +50,6 @@ export class GridItem extends React.Component<any, any> {
     }
   }
 
-  onLeave() {
-    const { layout } = this.context;
-    if (layout) {
-      layout.changeMouse([])
-    }
-  }
-
   onRemove() {
     if (this.props.onRemove) {
       this.props.onRemove(this.props.itemKey, this.props.gridKey)
@@ -66,12 +59,17 @@ export class GridItem extends React.Component<any, any> {
   render() {
     const { itemKey } = this.props;
     const { overItemKeys, activeItem } = this.context.layout;
+
     const currentOverKey = overItemKeys && overItemKeys.length > 0 ? overItemKeys[overItemKeys.length - 1] : null;
+    const canMove = this.props.className && !( this.props.className && this.props.className.indexOf('static') > -1 )
+    const isActive = (currentOverKey === itemKey && activeItem !== itemKey || activeItem === itemKey) && itemKey !== 'root'
+
     return (
       <Item
+        onMouseOver={this.onHover.bind(this)}
         onClick={this.onClick.bind(this)}
-        active={(currentOverKey === itemKey && activeItem !== itemKey || activeItem === itemKey) && itemKey !== 'root'}
-        move={!(!this.props.className || ( this.props.className && this.props.className.indexOf('static') > -1 ))}
+        active={isActive}
+        move={canMove}
         {...this.props}>
         {activeItem === itemKey && itemKey !== 'root' ?
           <RemoveIcon onClick={this.onRemove.bind(this)}>x</RemoveIcon> : null}

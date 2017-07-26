@@ -44,7 +44,10 @@ const uiSchema = [
 ];
 
 const layoutSchema = {
-  "root": { "options": { "padding": [10, 10], "margin": [0, 10] } },
+  "root": {
+    "layout": { "x": 0, "y": 0, "w": 12, "h": 4, "static": true },
+    "options": { "padding": [10, 10], "margin": [0, 10] }
+  },
   "11": { "layout": { "x": 0, "y": 1, "w": 12, "h": 1, "static": false } },
   "12": { "layout": { "x": 0, "y": 0, "w": 12, "h": 1, "static": false } },
 };
