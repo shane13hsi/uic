@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Card, Rate, UndefinedComponent } from '../antd/antd';
 import { GridLayoutContext } from '../grid-layout/grid-layout-context';
+import { observer } from 'mobx-react';
 import { UISchemaToJSX } from '../uischema-to-jsx/uischema-to-jsx';
 
 const map = {
@@ -52,6 +53,7 @@ const layoutSchema = {
   "12": { "layout": { "x": 0, "y": 0, "w": 12, "h": 1, "static": false } },
 };
 
+@observer
 export class Canvas extends React.Component<{}, {}> {
 
   render() {
@@ -64,3 +66,15 @@ export class Canvas extends React.Component<{}, {}> {
     )
   }
 }
+
+/**
+ * Form 表单 数据
+ * XXForm
+ * X2Form
+ *
+ * 其他组件
+ * uiSchema: {
+ *
+ * }
+ */
+

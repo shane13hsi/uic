@@ -2,57 +2,11 @@ import * as React from 'react';
 import { Tree } from '../antd/antd';
 import { bind } from 'decko';
 import { Scroll } from './components/scroll';
-
-const pageTree = [
-  {
-    id: '0-0',
-    title: 'parent 1',
-    children: [
-      {
-        id: '0-0-0',
-        title: 'parent 1-0',
-        children: [
-          {
-            id: '0-0-0-0',
-            title: 'leaf',
-          },
-          {
-            id: '0-0-0-1',
-            title: 'leaf',
-          },
-          {
-            id: '0-0-0-2',
-            title: 'leaf',
-          }
-        ]
-      },
-      {
-        id: '0-0-1',
-        title: 'parent 1-1',
-        children: [
-          {
-            id: '0-0-1-0',
-            title: 'leaf',
-          }
-        ]
-      },
-      {
-        id: '0-0-2',
-        title: 'parent 1-2',
-        children: [
-          {
-            id: '0-0-2-0',
-            title: 'leaf',
-          },
-          {
-            id: '0-0-2-1',
-            title: 'leaf',
-          }
-        ]
-      }
-    ]
-  }
-];
+import { observer } from 'mobx-react';
+import { lazyInject } from '../core/ioc';
+import { $PageTree } from './models/$page-tree';
+import { toJS } from 'mobx';
+import { GLApp } from './gl-app';
 
 // dao
 // model
@@ -61,19 +15,39 @@ const pageTree = [
 
 const TreeNode = Tree.TreeNode;
 
+@observer
 export class PageTree extends React.Component<{}, {}> {
+
+  @lazyInject($PageTree)
+  private $pageTree: $PageTree;
+
+
+  componentDidMount() {
+    this.$pageTree.loadPageTree('pageList');
+  }
+
+  @bind
+  handleSelect(selectedKeys: any[], e: { selected: boolean, selectedNodes, node, event }) {
+    if (e.node.props.isLeaf) {
+      const { eventKey, title } = e.node.props;
+      // 新建标签
+      GLApp.instance.addOrSetActiveWithinCanvas(eventKey, title);
+
+    }
+  }
 
   @bind
   treeNodeRender(treeList) {
     return treeList.map(item => {
       if (Array.isArray(item.children)) {
         return (
-          <TreeNode title={item.title} key={item.id}>
+          <TreeNode title={item.title}
+                    key={item.id}>
             {this.treeNodeRender(item.children)}
           </TreeNode>
         )
       } else {
-        return <TreeNode title={item.title} key={item.id}/>
+        return <TreeNode isLeaf={true} title={item.title} key={item.id}/>
       }
     });
   }
@@ -81,8 +55,9 @@ export class PageTree extends React.Component<{}, {}> {
   render() {
     return (
       <Scroll>
-        <Tree showLine>
-          {this.treeNodeRender(pageTree)}
+        <Tree showLine
+              onSelect={this.handleSelect}>
+          {this.treeNodeRender(toJS(this.$pageTree.pageTree))}
         </Tree>
       </Scroll>
     );
