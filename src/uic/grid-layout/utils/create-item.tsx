@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DragSource } from 'react-dnd';
+import { DragSource } from '@uic/react-dnd';
 import { merge } from 'lodash';
 
 const ItemSource = {

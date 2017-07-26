@@ -6,8 +6,8 @@ import { IUISchemaItem } from './interfaces';
 import { GridItem } from '../grid-layout/grid-item';
 import { Grid } from '../grid-layout/grid';
 import { getLayout } from '../grid-layout/utils/get-layout';
-// import { createTarget } from '../grid-layout/utils/create-target';
-// const GridTarget = createTarget("grid-target");
+import { createTarget } from '../grid-layout/utils/create-target';
+const GridTarget = createTarget("grid-target");
 
 export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly<{}>> {
   constructor(props, context) {
@@ -54,6 +54,6 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
       }
     });
 
-    return <Grid {...gridLayout}>{renderer}</Grid>
+    return <GridTarget><Grid {...gridLayout}>{renderer}</Grid></GridTarget>
   }
 }

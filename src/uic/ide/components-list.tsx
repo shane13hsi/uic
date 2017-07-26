@@ -3,10 +3,10 @@ import { Col, Collapse, Popover, Row } from '../antd/antd';
 import { bind } from 'decko';
 import { findDOMNode } from 'react-dom';
 import { Scroll } from './components/scroll';
-// import { createItem } from '../grid-layout/utils/create-item';
+import { createItem } from '../grid-layout/utils/create-item';
 
 const Panel = Collapse.Panel;
-// const Item = createItem("grid-target");
+const Item = createItem("grid-target");
 
 const text = `
   A dog is a type of domesticated animal.
@@ -42,11 +42,13 @@ export class ComponentsList extends React.Component<{}, {}> {
               <Col span={6}>
                 <Popover onVisibleChange={this.handleVisibleChange}
                          placement="right" content={content} title="Title">
-                  <div dangerouslySetInnerHTML={
-                    (() => ({
-                      __html: '<svg style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; cursor: move; left: 2px; top: 2px;"><g><g></g><g><g transform="translate(0.5,0.5)" style="visibility: visible;"><rect x="2" y="10" width="31" height="16" fill="#ffffff" stroke="#000000" pointer-events="all"></rect></g></g><g></g><g></g></g></svg>'
-                    }))()
-                  }/>
+                  <Item dropped={() => alert('jjj')}>
+                    <div dangerouslySetInnerHTML={
+                      (() => ({
+                        __html: '<svg style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; cursor: move; left: 2px; top: 2px;"><g><g></g><g><g transform="translate(0.5,0.5)" style="visibility: visible;"><rect x="2" y="10" width="31" height="16" fill="#ffffff" stroke="#000000" pointer-events="all"></rect></g></g><g></g><g></g></g></svg>'
+                      }))()
+                    }/>
+                  </Item>
                 </Popover>
               </Col>
               <Col span={6}>

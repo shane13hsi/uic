@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DropTarget } from 'react-dnd';
+import { DropTarget } from '@uic/react-dnd';
 import styled from 'styled-components';
 
 const TargetSource = {
