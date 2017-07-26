@@ -50,8 +50,11 @@ export class GLApp {
       this.glLayout.init();
 
       this.glLayout.on('stateChanged', () => {
-        const state = JSON.stringify(this.glLayout.toConfig());
-        this.saveState(state);
+        this.saveState(JSON.stringify(this.glLayout.toConfig()));
+      });
+
+      this.glLayout.on('itemDestroyed', (a) => {
+        this.removeCanvasMap(a.config.id);
       });
     }
   }
@@ -74,6 +77,12 @@ export class GLApp {
   private setCanvasMap(id: string, title: string) {
     const aMap = this.getCanvasMap();
     aMap.set(id, title);
+    localStorage.setItem(CANVAS_TABS_KEY, JSON.stringify([...aMap]));
+  }
+
+  private removeCanvasMap(id: string) {
+    const aMap = this.getCanvasMap();
+    aMap.delete(id);
     localStorage.setItem(CANVAS_TABS_KEY, JSON.stringify([...aMap]));
   }
 
