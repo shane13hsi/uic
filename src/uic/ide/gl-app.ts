@@ -77,6 +77,7 @@ export class GLApp {
   private setCanvasMap(id: string, title: string) {
     const aMap = this.getCanvasMap();
     aMap.set(id, title);
+    // http://2ality.com/2015/08/es6-map-json.html
     localStorage.setItem(CANVAS_TABS_KEY, JSON.stringify([...aMap]));
   }
 
@@ -95,6 +96,12 @@ export class GLApp {
     const canvas = this.glLayout.root.getItemsById('canvas')[0];
 
     if (this.getCanvasMap().get(id) != null) {
+      const oldChild = canvas.getItemsById(id)[0];
+      // 如果 title 变了
+      if (this.getCanvasMap().get(id) != title) {
+        this.setCanvasMap(id, title);
+        oldChild.setTitle(title);
+      }
       // set active
       canvas.setActiveContentItem(canvas.getItemsById(id)[0]);
     } else {
