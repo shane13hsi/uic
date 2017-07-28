@@ -24,7 +24,7 @@ const singletonEnforcer = Symbol();
  *
  */
 export class GLApp {
-  private glLayout: GoldenLayout & any;
+  private glLayout: GoldenLayout & { on: any };
 
   constructor(enforcer) {
     if (enforcer != singletonEnforcer) throw "Cannot construct singleton";
@@ -40,7 +40,7 @@ export class GLApp {
 
   public init() {
     if (this.glLayout == null) {
-      this.glLayout = new GoldenLayout(this.config, $('#golden-layout'));
+      this.glLayout = (new GoldenLayout(this.config, '#golden-layout')) as GoldenLayout & { on: any };
 
       this.glLayout.registerComponent('Canvas', Canvas);
       this.glLayout.registerComponent('PropertyForm', PropertyForm);
@@ -50,12 +50,18 @@ export class GLApp {
       this.glLayout.init();
 
       this.glLayout.on('stateChanged', () => {
-        this.saveState(JSON.stringify(this.glLayout.toConfig()));
+        if (this.glLayout.isInitialised) {
+          this.saveState(JSON.stringify(this.glLayout.toConfig()));
+        }
       });
 
       this.glLayout.on('itemDestroyed', (a) => {
         this.removeCanvasMap(a.config.id);
       });
+
+      $(window).resize(() => {
+        this.glLayout.updateSize()
+      })
     }
   }
 

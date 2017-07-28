@@ -21,14 +21,18 @@ function getComponent(name: string) {
   }
 }
 
+/**
+ * Mobx Form 实例作为数据，onChange 需要控制下
+ * mobx 数据
+ */
 export class PropertyForm extends React.Component<{}, {}> {
 
   render() {
     return (
       <Wrapper>
-        <UISchemaToJSX uiSchema={uiSchema}
+        {/*<UISchemaToJSX uiSchema={uiSchema}
                        layoutSchema={[]}
-                       getComponent={getComponent}/>
+                       getComponent={getComponent}/>*/}
       </Wrapper>
     )
   }
