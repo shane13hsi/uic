@@ -7,9 +7,15 @@ import { GridItem } from '../grid-layout/grid-item';
 import { Grid } from '../grid-layout/grid';
 import { getLayout } from '../grid-layout/utils/get-layout';
 import { createTarget } from '../grid-layout/utils/create-target';
+import { lazyInject } from '../core/ioc';
+import { $Canvas } from '../ide/models/$canvas';
+import { bind } from 'decko';
 const GridTarget = createTarget("grid-target");
 
 export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly<{}>> {
+  @lazyInject($Canvas)
+  private $canvas: $Canvas;
+
   constructor(props, context) {
     super(props, context);
   }
@@ -18,14 +24,19 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
     layout: React.PropTypes.object
   };
 
+  @bind
+  handleGridChange(layout: any) {
+    this.$canvas.updateLayoutSchema(layout);
+  }
+
+
   render() {
     const { getComponent, uiSchema, parentUiSchema, data, handlers, layoutSchema } = this.props;
-    const gridLayout = getLayout(parentUiSchema, layoutSchema, this.context.layout.activeGrid)
+    const gridKey = parentUiSchema ? parentUiSchema._id : null
 
     const renderer = uiSchema.map((item: IUISchemaItem) => {
       const Component = getComponent(item.component);
       const nextProps = replaceProps(item.props, data, handlers);
-      const gridKey = parentUiSchema ? parentUiSchema._id : null
       const gridItemProps = {
         key: item._id,
         itemKey: item._id,
@@ -54,6 +65,11 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
       }
     });
 
-    return <GridTarget><Grid {...gridLayout}>{renderer}</Grid></GridTarget>
+    return (
+      <GridTarget targetKey={gridKey}>
+        <Grid {...getLayout(parentUiSchema, layoutSchema, this.context.layout.activeGrid)}
+              onChange={this.handleGridChange}>{renderer}</Grid>
+      </GridTarget>
+    )
   }
 }

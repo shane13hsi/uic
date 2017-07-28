@@ -4,6 +4,8 @@ import { bind } from 'decko';
 import { findDOMNode } from 'react-dom';
 import { Scroll } from './components/scroll';
 import { createItem } from '../grid-layout/utils/create-item';
+import { $Canvas } from './models/$canvas';
+import { lazyInject } from '../core/ioc';
 
 const Panel = Collapse.Panel;
 const Item = createItem("grid-target");
@@ -24,6 +26,9 @@ const content = (
 export class ComponentsList extends React.Component<{}, {}> {
   node: any;
 
+  @lazyInject($Canvas)
+  private $canvas: $Canvas;
+
   /**
    * 处理下定位 left 距离，jQuery 配合 React 的 class 和 event handler 很灵活
    */
@@ -42,7 +47,7 @@ export class ComponentsList extends React.Component<{}, {}> {
               <Col span={6}>
                 <Popover onVisibleChange={this.handleVisibleChange}
                          placement="right" content={content} title="Title">
-                  <Item dropped={() => alert('jjj')}>
+                  <Item dropped={({ target }) => this.$canvas.addComponent('Input', target)}>
                     <div dangerouslySetInnerHTML={
                       (() => ({
                         __html: '<svg style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; cursor: move; left: 2px; top: 2px;"><g><g></g><g><g transform="translate(0.5,0.5)" style="visibility: visible;"><rect x="2" y="10" width="31" height="16" fill="#ffffff" stroke="#000000" pointer-events="all"></rect></g></g><g></g><g></g></g></svg>'

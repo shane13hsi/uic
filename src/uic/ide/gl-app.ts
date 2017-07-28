@@ -1,10 +1,11 @@
-declare var require: any;
-
 import * as GoldenLayout from 'golden-layout';
 import { Canvas } from './canvas';
 import { PropertyForm } from './property-form';
 import { PageTree } from './page-tree';
 import { ComponentsList } from './components-list';
+import { lazyInject } from '../core/ioc';
+import { $Canvas } from './models/$canvas';
+declare var require: any;
 
 const LAYOUT_KEY = '$$uic_ide_layout';
 const CANVAS_TABS_KEY = '$$uic_ide_canvas_tabs';
@@ -24,7 +25,11 @@ const singletonEnforcer = Symbol();
  *
  */
 export class GLApp {
-  private glLayout: GoldenLayout & { on: any };
+
+  @lazyInject($Canvas)
+  private $canvas: $Canvas;
+
+  public glLayout: GoldenLayout & { on: any };
 
   constructor(enforcer) {
     if (enforcer != singletonEnforcer) throw "Cannot construct singleton";
@@ -61,7 +66,14 @@ export class GLApp {
 
       $(window).resize(() => {
         this.glLayout.updateSize()
-      })
+      });
+
+      this.glLayout.on('initialised', () => {
+        const item = this.getCanvasContentItem().getActiveContentItem();
+        let id = Array.isArray(item.config.id) ? item.config.id[0] : item.config.id;
+        // 更新 $canvas map
+        this.$canvas.init(this.getCanvasMap(), id);
+      });
     }
   }
 
@@ -93,13 +105,18 @@ export class GLApp {
     localStorage.setItem(CANVAS_TABS_KEY, JSON.stringify([...aMap]));
   }
 
+  private getCanvasContentItem() {
+    const canvas = this.glLayout.root.getItemsById('canvas')[0];
+    return canvas;
+  }
+
   /**
    *
    * @param id
    * @param title
    */
   public addOrSetActiveWithinCanvas(id: string, title: string) {
-    const canvas = this.glLayout.root.getItemsById('canvas')[0];
+    const canvas = this.getCanvasContentItem();
 
     if (this.getCanvasMap().get(id) != null) {
       const oldChild = canvas.getItemsById(id)[0];

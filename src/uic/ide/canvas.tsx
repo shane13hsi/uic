@@ -3,6 +3,10 @@ import { Card, Rate, UndefinedComponent } from '../antd/antd';
 import { GridLayoutContext } from '../grid-layout/grid-layout-context';
 import { observer } from 'mobx-react';
 import { UISchemaToJSX } from '../uischema-to-jsx/uischema-to-jsx';
+import { $Canvas } from './models/$canvas';
+import { lazyInject } from '../core/ioc';
+import { GLApp } from './gl-app';
+import { toJS } from 'mobx';
 
 const map = {
   Rate,
@@ -17,7 +21,7 @@ export function getComponent(name: string) {
   }
 }
 
-const uiSchema = [
+const uiSchema1 = [
   {
     "_id": "root",
     "component": "Card",
@@ -44,7 +48,7 @@ const uiSchema = [
   }
 ];
 
-const layoutSchema = {
+const layoutSchema1 = {
   "root": {
     "layout": { "x": 0, "y": 0, "w": 12, "h": 4, "static": true },
     "options": { "padding": [10, 10], "margin": [0, 10] }
@@ -56,11 +60,23 @@ const layoutSchema = {
 @observer
 export class Canvas extends React.Component<{}, {}> {
 
+  @lazyInject($Canvas)
+  private $canvas: $Canvas;
+
   render() {
+    const uiSchema = this.$canvas.activeUISchema;
+    const layoutSchema = this.$canvas.activeLayoutSchema;
+
+    if (!GLApp.instance.glLayout.isInitialised) {
+      return <div/>
+    }
+
+    console.log(layoutSchema);
+
     return (
       <GridLayoutContext>
-        <UISchemaToJSX uiSchema={uiSchema}
-                       layoutSchema={layoutSchema}
+        <UISchemaToJSX uiSchema={toJS(uiSchema)}
+                       layoutSchema={toJS(layoutSchema)}
                        getComponent={getComponent}/>
       </GridLayoutContext>
     )

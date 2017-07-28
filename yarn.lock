@@ -22,9 +22,9 @@
   dependencies:
     lodash "^4.16.2"
 
-"@uic/react-dnd@^2.4.0-1":
-  version "2.4.0-1"
-  resolved "https://registry.yarnpkg.com/@uic/react-dnd/-/react-dnd-2.4.0-1.tgz#251177ca2052bae784a330f3eb1c53f1d5c5ae24"
+"@uic/react-dnd@^2.4.0-2":
+  version "2.4.0-2"
+  resolved "https://registry.yarnpkg.com/@uic/react-dnd/-/react-dnd-2.4.0-2.tgz#7910604228e7d3ba8617fe410f8194117bf91d18"
   dependencies:
     disposables "^1.0.1"
     dnd-core "^2.4.0"
