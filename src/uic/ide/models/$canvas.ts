@@ -58,15 +58,12 @@ export class $Canvas {
   updateLayoutSchema(layout: any[]) {
     let layoutSchema: any = this.activeLayoutSchema;
 
-    console.log(layout)
-
     if (Array.isArray(layout)) {
       layout.forEach(l => {
         const { x, y, w, h, i } = l;
         set(layoutSchema, `${i}.layout`, { x, y, w, h, "static": l.static })
       })
     }
-
     this.layoutMap.set(this.activeId, layoutSchema);
   }
 
