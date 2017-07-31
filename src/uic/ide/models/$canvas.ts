@@ -88,7 +88,6 @@ export class $Canvas {
   @action
   async updateLayoutSchema(layout: any[]) {
     let layoutSchemaDoc: any = this.layoutSchemaMap.get(this.activeId);
-    console.log(layoutSchemaDoc._rev);
 
     if (Array.isArray(layout)) {
       layout.forEach(l => {

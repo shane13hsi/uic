@@ -8,42 +8,42 @@ export function getLayout(uiSchema: IUISchemaItem, layoutSchema: any, activeGrid
   }
   const { props } = uiSchema;
   const { children } = props;
-  let recalc = false;
-  let recalcBase: any = {};
-  let recalcOffset = 0;
+  // let recalc = false;
+  // let recalcBase: any = {};
+  // let recalcOffset = 0;
   if (children && Array.isArray(children)) {
     let layout = children.map(item => {
       if (isEmpty(layoutSchema[item._id])) {
         return { x: 0, y: 0, w: 12, h: 1, static: activeGrid !== uiSchema._id, i: item._id }
       }
-      let originHeight: number = get<any, number>(layoutSchema, [item._id, 'layout', 'h']);
-      let resolvedHeight = getChildrenHeight(item, layoutSchema);
-      if (resolvedHeight > originHeight) {
-        recalc = true;
-        recalcBase = merge({}, layoutSchema[item._id].layout, { h: resolvedHeight, i: item._id });
-        recalcOffset = resolvedHeight - originHeight
-      }
+      // let originHeight: number = get<any, number>(layoutSchema, [item._id, 'layout', 'h']);
+      // let resolvedHeight = getChildrenHeight(item, layoutSchema);
+      // if (resolvedHeight > originHeight) {
+      //   recalc = true;
+      //   recalcBase = merge({}, layoutSchema[item._id].layout, { h: resolvedHeight, i: item._id });
+      //   recalcOffset = resolvedHeight - originHeight
+      // }
       return merge({}, get(layoutSchema, [item._id, 'layout']), {
-        h: Math.max(resolvedHeight, layoutSchema[item._id].layout.h),
-        // h: resolvedHeight || layoutSchema[item._id].layout.h,
+        // h: Math.max(resolvedHeight, layoutSchema[item._id].layout.h),
+        h: layoutSchema[item._id].layout.h,
         i: item._id,
         "static": activeGrid !== uiSchema._id
       })
     });
 
-    if (recalc) {
-      let newLayout = layout.map((item: any) => {
-        // 在下方受影响 后面要添加上x轴的判断
-        if ((item.y <= recalcBase.y + recalcBase.h + 1) && (item.y > recalcBase.y) && (item.i !== recalcBase.i)) {
-          return merge({}, item, { y: item.y + recalcOffset })
-        } else {
-          return item
-        }
-      });
-      return Object.assign({ layout: newLayout }, get(layoutSchema, `${uiSchema._id}.options`));
-    } else {
-      return Object.assign({ layout }, get(layoutSchema, `${uiSchema._id}.options`));
-    }
+    // if (recalc) {
+    //   let newLayout = layout.map((item: any) => {
+    //     // 在下方受影响 后面要添加上x轴的判断
+    //     if ((item.y <= recalcBase.y + recalcBase.h + 1) && (item.y > recalcBase.y) && (item.i !== recalcBase.i)) {
+    //       return merge({}, item, { y: item.y + recalcOffset })
+    //     } else {
+    //       return item
+    //     }
+    //   });
+    //   return Object.assign({ layout: newLayout }, get(layoutSchema, `${uiSchema._id}.options`));
+    // } else {
+    return Object.assign({ layout }, get(layoutSchema, `${uiSchema._id}.options`));
+    // }
   } else {
     return {}
   }
