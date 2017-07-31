@@ -28,8 +28,8 @@ export class Canvas extends React.Component<{}, {}> {
   private $canvas: $Canvas;
 
   render() {
-    const uiSchema = this.$canvas.activeUISchema;
-    const layoutSchema = this.$canvas.activeLayoutSchema;
+    const uiSchema = this.$canvas.currentUISchema;
+    const layoutSchema = this.$canvas.currentLayoutSchema;
 
     if (!GLApp.instance.glLayout.isInitialised) {
       return <div/>
