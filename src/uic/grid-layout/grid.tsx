@@ -56,9 +56,11 @@ export class Grid extends React.Component<any, any> {
         <ReactGridLayout layout={layout}
                          cols={cols}
                          rowHeight={rowHeight}
-                         width={size.width} verticalCompact={false}
+                         width={size.width}
+                         verticalCompact={false}
                          measureBeforeMount={true}
-                         containerPadding={padding} margin={margin}
+                         containerPadding={padding}
+                         margin={margin}
                          onDrag={this.onDrag}
                          onResize={this.onResize}
                          onResizeStop={this.onChange}

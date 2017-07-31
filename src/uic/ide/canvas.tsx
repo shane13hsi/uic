@@ -70,8 +70,11 @@ export class Canvas extends React.Component<{}, {}> {
     if (!GLApp.instance.glLayout.isInitialised) {
       return <div/>
     }
-
-    console.log(layoutSchema);
+    // TODO: 由于请求的时候，会有 undefined 存在。
+    // 猜测在 golden layout 初始化时，uiSchema 已经加载好，layoutSchema 还没有
+    if (uiSchema == null || layoutSchema == null) {
+      return <div/>
+    }
 
     return (
       <GridLayoutContext>
@@ -82,15 +85,3 @@ export class Canvas extends React.Component<{}, {}> {
     )
   }
 }
-
-/**
- * Form 表单 数据
- * XXForm
- * X2Form
- *
- * 其他组件
- * uiSchema: {
- *
- * }
- */
-

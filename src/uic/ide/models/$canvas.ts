@@ -1,6 +1,7 @@
 import { action, computed, observable } from 'mobx';
 import { provide } from '../../core/ioc';
 import { set } from 'lodash';
+import { db } from '../db/pouchdb';
 
 function InputSchema() {
   return {
@@ -17,11 +18,11 @@ function InputSchema() {
 export class $Canvas {
 
   @observable activeId: string;
-  @observable map = new Map<string, any>();
+  @observable uiSchemaMap = new Map<string, any>();
   @observable layoutMap = new Map<string, any>();
 
   @computed get activeUISchema() {
-    return this.map.get(this.activeId);
+    return this.uiSchemaMap.get(this.activeId);
   }
 
   @computed get activeLayoutSchema() {
@@ -30,8 +31,8 @@ export class $Canvas {
 
   @action
   initMap(map) {
-    for (let [key, value] of map) {
-      this.map.set(key, undefined);
+    for (let [key, _] of map) {
+      this.uiSchemaMap.set(key, undefined);
     }
   }
 
@@ -41,69 +42,47 @@ export class $Canvas {
   }
 
   @action
-  loadUISchema(id: string) {
-    this.map.set(id, [
-      {
-        "_id": "root",
-        "component": "Card",
-        "props": {
-          "title": "测试拖动布局",
-          "children": [
-            {
-              "_id": "11",
-              "component": "Rate",
-              "props": {
-                "allowHalf": true,
-                "defaultValue": 3.5
-              }
-            },
-            {
-              "_id": "12",
-              "component": "Rate",
-              "props": {
-                "defaultValue": 4,
-              }
-            }
-          ]
-        }
-      }
-    ]);
+  async loadUISchema(id: string) {
+    // TODO: 暂时不清楚 no-sql 存储 list 的好方法
+    const doc = await db.get(`uiSchema/${id}`);
+    this.uiSchemaMap.set(id, doc.uiSchema);
   }
 
   @action
-  loadLayoutSchema(id: string) {
-    this.layoutMap.set(id, {
-      "root": {
-        "layout": { "x": 0, "y": 0, "w": 12, "h": 4, "static": true },
-        "options": { "padding": [10, 10], "margin": [0, 10] }
-      }
-    })
+  async loadLayoutSchema(id: string) {
+    const doc = await db.get(`layoutSchema/${id}`);
+    this.layoutMap.set(id, doc.layoutSchema);
   }
 
   @action
-  updateLayoutSchema(layout: any) {
-    let layoutSchema = this.activeLayoutSchema
-    if (layout && Array.isArray(layout)) {
+  updateLayoutSchema(layout: any[]) {
+    let layoutSchema: any = this.activeLayoutSchema;
+
+    console.log(layout)
+
+    if (Array.isArray(layout)) {
       layout.forEach(l => {
         const { x, y, w, h, i } = l;
         set(layoutSchema, `${i}.layout`, { x, y, w, h, "static": l.static })
       })
     }
+
     this.layoutMap.set(this.activeId, layoutSchema);
   }
 
   @action
-  init(map: Map<string, string>, activeId) {
+  async init(map: Map<string, string>, activeId) {
     this.initMap(map);
     this.setActiveId(activeId);
-    this.loadUISchema(activeId);
-    this.loadLayoutSchema(activeId);
+    await this.loadUISchema(activeId);
+    await this.loadLayoutSchema(activeId);
+    return;
   }
 
   @action
   addComponent(type, target) {
     let schema = this.activeUISchema
-    schema[0].props.children.push(InputSchema())
-    this.map.set(this.activeId, schema);
+    schema[0].props.children.push(InputSchema());
+    this.uiSchemaMap.set(this.activeId, schema);
   }
 }

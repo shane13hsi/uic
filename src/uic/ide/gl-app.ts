@@ -5,8 +5,8 @@ import { PageTree } from './page-tree';
 import { ComponentsList } from './components-list';
 import { lazyInject } from '../core/ioc';
 import { $Canvas } from './models/$canvas';
-declare var require: any;
 
+// TODO: 放到 Pouchdb 里
 const LAYOUT_KEY = '$$uic_ide_layout';
 const CANVAS_TABS_KEY = '$$uic_ide_canvas_tabs';
 
@@ -22,7 +22,6 @@ const singletonEnforcer = Symbol();
  * manully implement a singleton pattern
  *
  * 猜测是因为 golden-layout 的实现方式导致的
- *
  */
 export class GLApp {
 
@@ -72,7 +71,7 @@ export class GLApp {
         const item = this.getCanvasContentItem().getActiveContentItem();
         let id = Array.isArray(item.config.id) ? item.config.id[0] : item.config.id;
         // 更新 $canvas map
-        this.$canvas.init(this.getCanvasMap(), id);
+        return this.$canvas.init(this.getCanvasMap(), id);
       });
     }
   }
