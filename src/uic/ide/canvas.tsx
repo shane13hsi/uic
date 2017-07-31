@@ -21,42 +21,6 @@ export function getComponent(name: string) {
   }
 }
 
-const uiSchema1 = [
-  {
-    "_id": "root",
-    "component": "Card",
-    "props": {
-      "title": "测试拖动布局",
-      "children": [
-        {
-          "_id": "11",
-          "component": "Rate",
-          "props": {
-            "allowHalf": true,
-            "defaultValue": 3.5
-          }
-        },
-        {
-          "_id": "12",
-          "component": "Rate",
-          "props": {
-            "defaultValue": 4,
-          }
-        }
-      ]
-    }
-  }
-];
-
-const layoutSchema1 = {
-  "root": {
-    "layout": { "x": 0, "y": 0, "w": 12, "h": 4, "static": true },
-    "options": { "padding": [10, 10], "margin": [0, 10] }
-  },
-  "11": { "layout": { "x": 0, "y": 1, "w": 12, "h": 1, "static": false } },
-  "12": { "layout": { "x": 0, "y": 0, "w": 12, "h": 1, "static": false } },
-};
-
 @observer
 export class Canvas extends React.Component<{}, {}> {
 
@@ -64,8 +28,8 @@ export class Canvas extends React.Component<{}, {}> {
   private $canvas: $Canvas;
 
   render() {
-    const uiSchema = this.$canvas.activeUISchema;
-    const layoutSchema = this.$canvas.activeLayoutSchema;
+    const uiSchema = this.$canvas.currentUISchema;
+    const layoutSchema = this.$canvas.currentLayoutSchema;
 
     if (!GLApp.instance.glLayout.isInitialised) {
       return <div/>

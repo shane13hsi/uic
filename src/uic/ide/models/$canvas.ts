@@ -1,4 +1,4 @@
-import { action, computed, observable } from 'mobx';
+import { action, computed, extendObservable, observable, toJS } from 'mobx';
 import { provide } from '../../core/ioc';
 import { set } from 'lodash';
 import { db } from '../db/pouchdb';
@@ -19,14 +19,22 @@ export class $Canvas {
 
   @observable activeId: string;
   @observable uiSchemaMap = new Map<string, any>();
-  @observable layoutMap = new Map<string, any>();
+  @observable layoutSchemaMap = new Map<string, any>();
 
-  @computed get activeUISchema() {
-    return this.uiSchemaMap.get(this.activeId);
+  @computed get currentUISchema() {
+    if (this.uiSchemaMap.get(this.activeId) != null) {
+      return this.uiSchemaMap.get(this.activeId).data;
+    } else {
+      return undefined;
+    }
   }
 
-  @computed get activeLayoutSchema() {
-    return this.layoutMap.get(this.activeId);
+  @computed get currentLayoutSchema() {
+    if (this.layoutSchemaMap.get(this.activeId) != null) {
+      return this.layoutSchemaMap.get(this.activeId).data;
+    } else {
+      return undefined;
+    }
   }
 
   @action
@@ -43,28 +51,69 @@ export class $Canvas {
 
   @action
   async loadUISchema(id: string) {
-    // TODO: 暂时不清楚 no-sql 存储 list 的好方法
-    const doc = await db.get(`uiSchema/${id}`);
-    this.uiSchemaMap.set(id, doc.uiSchema);
+    await db.createIndex({
+      index: { fields: ['type', 'pageId'] },
+      ddoc: "my-index-design-doc"
+    });
+
+    const rtv = await db.find({
+      selector: {
+        type: 'uiSchema',
+        pageId: id
+      },
+      use_index: "my-index-design-doc"
+    });
+
+    this.uiSchemaMap.set(id, rtv.docs[0]);
   }
 
   @action
   async loadLayoutSchema(id: string) {
-    const doc = await db.get(`layoutSchema/${id}`);
-    this.layoutMap.set(id, doc.layoutSchema);
+    await db.createIndex({
+      index: { fields: ['type', 'pageId'] },
+      ddoc: "my-index-design-doc"
+    });
+
+    const rtv = await db.find({
+      selector: {
+        type: 'layoutSchema',
+        pageId: id
+      },
+      use_index: "my-index-design-doc"
+    });
+
+    this.layoutSchemaMap.set(id, rtv.docs[0]);
   }
 
   @action
-  updateLayoutSchema(layout: any[]) {
-    let layoutSchema: any = this.activeLayoutSchema;
+  async updateLayoutSchema(layout: any[]) {
+    let layoutSchemaDoc: any = this.layoutSchemaMap.get(this.activeId);
 
     if (Array.isArray(layout)) {
       layout.forEach(l => {
         const { x, y, w, h, i } = l;
-        set(layoutSchema, `${i}.layout`, { x, y, w, h, "static": l.static })
+        if (layoutSchemaDoc.data[i] == null) {
+          extendObservable(layoutSchemaDoc.data, {
+            i: {
+              layout: {}
+            }
+          });
+        }
+
+        extendObservable(layoutSchemaDoc.data[i].layout, {
+          x, y, w, h, "static": l.static
+        });
+
       })
     }
-    this.layoutMap.set(this.activeId, layoutSchema);
+
+    try {
+      const res = await db.put(toJS(layoutSchemaDoc));
+      layoutSchemaDoc._rev = res.rev;
+      console.log(layoutSchemaDoc._rev);
+      this.layoutSchemaMap.set(this.activeId, layoutSchemaDoc);
+    } catch (e) {
+    }
   }
 
   @action
@@ -78,8 +127,8 @@ export class $Canvas {
 
   @action
   addComponent(type, target) {
-    let schema = this.activeUISchema
-    schema[0].props.children.push(InputSchema());
-    this.uiSchemaMap.set(this.activeId, schema);
+    let uiSchemaDoc = this.uiSchemaMap.get(this.activeId);
+    uiSchemaDoc[0].props.children.push(InputSchema());
+    this.uiSchemaMap.set(this.activeId, uiSchemaDoc);
   }
 }
