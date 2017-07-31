@@ -19,14 +19,14 @@ export class $Canvas {
 
   @observable activeId: string;
   @observable uiSchemaMap = new Map<string, any>();
-  @observable layoutMap = new Map<string, any>();
+  @observable layoutSchemaMap = new Map<string, any>();
 
   @computed get activeUISchema() {
     return this.uiSchemaMap.get(this.activeId);
   }
 
   @computed get activeLayoutSchema() {
-    return this.layoutMap.get(this.activeId);
+    return this.layoutSchemaMap.get(this.activeId);
   }
 
   @action
@@ -43,15 +43,38 @@ export class $Canvas {
 
   @action
   async loadUISchema(id: string) {
-    // TODO: 暂时不清楚 no-sql 存储 list 的好方法
-    const doc = await db.get(`uiSchema/${id}`);
-    this.uiSchemaMap.set(id, doc.uiSchema);
+    await db.createIndex({
+      index: { fields: ['type', 'pageId'] },
+      ddoc: "my-index-design-doc"
+    });
+
+    const rtv = await db.find({
+      selector: {
+        type: 'uiSchema',
+        pageId: id
+      },
+      use_index: "my-index-design-doc"
+    });
+
+    this.uiSchemaMap.set(id, rtv.docs[0].data);
   }
 
   @action
   async loadLayoutSchema(id: string) {
-    const doc = await db.get(`layoutSchema/${id}`);
-    this.layoutMap.set(id, doc.layoutSchema);
+    await db.createIndex({
+      index: { fields: ['type', 'pageId'] },
+      ddoc: "my-index-design-doc"
+    });
+
+    const rtv = await db.find({
+      selector: {
+        type: 'layoutSchema',
+        pageId: id
+      },
+      use_index: "my-index-design-doc"
+    });
+
+    this.layoutSchemaMap.set(id, rtv.docs[0].data);
   }
 
   @action
@@ -67,7 +90,7 @@ export class $Canvas {
       })
     }
 
-    this.layoutMap.set(this.activeId, layoutSchema);
+    this.layoutSchemaMap.set(this.activeId, layoutSchema);
   }
 
   @action

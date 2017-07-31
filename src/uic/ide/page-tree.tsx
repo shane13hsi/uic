@@ -8,11 +8,6 @@ import { $PageTree } from './models/$page-tree';
 import { toJS } from 'mobx';
 import { GLApp } from './gl-app';
 
-// dao
-// model
-// page-list -> PageTree observer
-// preview-tabs -> addTab
-
 const TreeNode = Tree.TreeNode;
 
 @observer
@@ -32,7 +27,6 @@ export class PageTree extends React.Component<{}, {}> {
       const { eventKey, title } = e.node.props;
       // 新建标签
       GLApp.instance.addOrSetActiveWithinCanvas(eventKey, title);
-
     }
   }
 

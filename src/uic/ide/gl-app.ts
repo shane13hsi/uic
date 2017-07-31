@@ -15,6 +15,8 @@ const defaultConfig = require('./models/gl-layout-default-config.json');
 const singleton = Symbol();
 const singletonEnforcer = Symbol();
 
+type GoldenLayout2 = GoldenLayout & { on: any };
+
 /**
  * 不使用 React 结合的方式，使用 singleton
  *
@@ -28,7 +30,7 @@ export class GLApp {
   @lazyInject($Canvas)
   private $canvas: $Canvas;
 
-  public glLayout: GoldenLayout & { on: any };
+  public glLayout: GoldenLayout2;
 
   constructor(enforcer) {
     if (enforcer != singletonEnforcer) throw "Cannot construct singleton";
@@ -44,7 +46,7 @@ export class GLApp {
 
   public init() {
     if (this.glLayout == null) {
-      this.glLayout = (new GoldenLayout(this.config, '#golden-layout')) as GoldenLayout & { on: any };
+      this.glLayout = (new GoldenLayout(this.config, '#golden-layout')) as GoldenLayout2;
 
       this.glLayout.registerComponent('Canvas', Canvas);
       this.glLayout.registerComponent('PropertyForm', PropertyForm);
