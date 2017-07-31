@@ -108,6 +108,11 @@ export class GLApp {
 
   private getCanvasContentItem() {
     const canvas = this.glLayout.root.getItemsById('canvas')[0];
+
+    canvas.on('activeContentItemChanged', (a, b) => {
+      this.$canvas.setActiveId(a.config.id);
+    });
+
     return canvas;
   }
 

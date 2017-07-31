@@ -129,7 +129,7 @@ export class $Canvas {
   @action
   addComponent(type, target) {
     let uiSchemaDoc = this.uiSchemaMap.get(this.activeId);
-    uiSchemaDoc[0].props.children.push(InputSchema());
+    uiSchemaDoc.data[0].props.children.push(InputSchema());
     this.uiSchemaMap.set(this.activeId, uiSchemaDoc);
   }
 }
