@@ -94,7 +94,7 @@ export class $Canvas {
         const { x, y, w, h, i } = l;
         if (layoutSchemaDoc.data[i] == null) {
           extendObservable(layoutSchemaDoc.data, {
-            i: {
+            [i]: {
               layout: {}
             }
           });
@@ -110,7 +110,6 @@ export class $Canvas {
     try {
       const res = await db.put(toJS(layoutSchemaDoc));
       layoutSchemaDoc._rev = res.rev;
-      console.log(layoutSchemaDoc._rev);
       this.layoutSchemaMap.set(this.activeId, layoutSchemaDoc);
     } catch (e) {
     }
@@ -126,9 +125,15 @@ export class $Canvas {
   }
 
   @action
-  addComponent(type, target) {
+  async addComponent(type, target) {
     let uiSchemaDoc = this.uiSchemaMap.get(this.activeId);
     uiSchemaDoc.data[0].props.children.push(InputSchema());
-    this.uiSchemaMap.set(this.activeId, uiSchemaDoc);
+
+    try {
+      const res = await db.put(toJS(uiSchemaDoc));
+      uiSchemaDoc._rev = res.rev;
+      this.uiSchemaMap.set(this.activeId, uiSchemaDoc);
+    } catch (e) {
+    }
   }
 }
