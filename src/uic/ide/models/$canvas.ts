@@ -1,15 +1,14 @@
 import { action, extendObservable, observable, toJS } from 'mobx';
 import { provide } from '../../core/ioc';
-import { set } from 'lodash';
+import { remove, set } from 'lodash';
 import { db } from '../db/pouchdb';
 
 function InputSchema() {
   return {
     "_id": String(Date.parse(new Date().toISOString())),
-    "component": "Rate",
+    "component": "Card",
     "props": {
-      "allowHalf": true,
-      "defaultValue": 1
+      "children": []
     }
   }
 }
@@ -46,7 +45,15 @@ export class $Canvas {
       },
       use_index: "my-index-design-doc"
     });
-    this.uiSchemaMap.set(id, rtv.docs[0] || { data: [] });
+    this.uiSchemaMap.set(id, rtv.docs[0] || {
+        data: [{
+          "_id": "root",
+          "component": "Board",
+          "props": {
+            "children": []
+          }
+        }]
+      });
   }
 
   @action
@@ -65,9 +72,9 @@ export class $Canvas {
     this.layoutSchemaMap.set(id, rtv.docs[0] || {
         data: {
           root: {
-            layout: [{
+            layout: {
               x: 0, y: 0, w: 12, h: 1
-            }]
+            }
           }
         }
       });
@@ -104,13 +111,45 @@ export class $Canvas {
   @action
   async addComponent(type, target) {
     let uiSchemaDoc = this.uiSchemaMap.get(this.activeId);
-    uiSchemaDoc.data[0].props.children.push(InputSchema());
+    let nodeToAdd = findNodeOfTree(uiSchemaDoc.data, target)
+    nodeToAdd.props.children.push(InputSchema());
 
     try {
       const res = await db.put(toJS(uiSchemaDoc));
       uiSchemaDoc._rev = res.rev;
       this.uiSchemaMap.set(this.activeId, uiSchemaDoc);
     } catch (e) {
+    }
+  }
+
+  @action
+  async removeComponent(itemKey, gridKey) {
+    let uiSchemaDoc = this.uiSchemaMap.get(this.activeId);
+    let grid = findNodeOfTree(uiSchemaDoc.data, gridKey)
+    let gridChildren = grid.props.children;
+    remove(gridChildren, i => i._id === itemKey);
+
+    try {
+      const res = await db.put(toJS(uiSchemaDoc));
+      uiSchemaDoc._rev = res.rev;
+      this.uiSchemaMap.set(this.activeId, uiSchemaDoc);
+    } catch (e) {
+    }
+  }
+}
+
+function findNodeOfTree(tree, id) {
+  if (!tree) {
+    return {}
+  }
+
+  for (let i = 0; i < tree.length; i++) {
+    if (tree[i]._id === id) {
+      return tree[i]
+    } else if (tree[i].props.children && tree[i].props.children.length > 0) {
+      if (findNodeOfTree(tree[i].props.children, id)) {
+        return findNodeOfTree(tree[i].props.children, id)
+      }
     }
   }
 }

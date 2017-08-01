@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Card, Rate, UndefinedComponent } from '../antd/antd';
 import { GridLayoutContext } from '../grid-layout/grid-layout-context';
 import { observer } from 'mobx-react';
 import { UISchemaToJSX } from '../uischema-to-jsx/uischema-to-jsx';
@@ -7,19 +6,7 @@ import { $Canvas } from './models/$canvas';
 import { lazyInject } from '../core/ioc';
 import { GLApp } from './gl-app';
 import { toJS } from 'mobx';
-
-const map = {
-  Rate,
-  Card
-};
-
-export function getComponent(name: string) {
-  if (map[name]) {
-    return map[name];
-  } else {
-    return UndefinedComponent;
-  }
-}
+import { getComponent } from './get-component';
 
 @observer
 export class Canvas extends React.Component<{}, {}> {

@@ -7,7 +7,7 @@ const Item: any = styled.div`// styled
     border: ${(props: any )=> props.active ? '1px solid #cccccc' : '1px solid transparent'};
     user-select: none;
     cursor: ${(props: any )=> props.move ? 'move' : 'default'};
-    height: 100%;
+    height: ${(props: any) => props.itemKey === 'root' ? '100% !important' : '100%'};
   }
 `;
 
@@ -66,6 +66,7 @@ export class GridItem extends React.Component<any, any> {
 
     return (
       <Item
+        itemKey={itemKey}
         onMouseOver={this.onHover.bind(this)}
         onClick={this.onClick.bind(this)}
         active={isActive}
