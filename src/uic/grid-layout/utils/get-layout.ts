@@ -30,7 +30,7 @@ export function getLayout(uiSchema: IUISchemaItem, layoutSchema: any, activeGrid
         // h: Math.max(resolvedHeight, layoutSchema[item._id].layout.h),
         h: layoutSchema[item._id].layout.h,
         i: item._id,
-        "static": activeGrid !== uiSchema._id || uiSchema._id === 'root'
+        "static": activeGrid !== uiSchema._id
       })
     });
 
