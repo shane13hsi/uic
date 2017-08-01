@@ -12,6 +12,7 @@ db.sync('http://192.168.50.157:5984/uic-ide', {
   live: true,
   retry: true
 });
+// PouchDB.replicate('http://192.168.50.157:5984/uic-ide', 'http://localhost:5984/uic-ide');
 
 db.info().then(function (info) {
   console.debug(info);

@@ -29,10 +29,15 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
     this.$canvas.updateLayoutSchema(layout);
   }
 
+  @bind
+  removeComponent(itemKey: string, gridKey: string) {
+    this.$canvas.removeComponent(itemKey, gridKey);
+  }
+
 
   render() {
     const { getComponent, uiSchema, parentUiSchema, data, handlers, layoutSchema } = this.props;
-    const gridKey = parentUiSchema ? parentUiSchema._id : null
+    const gridKey = parentUiSchema ? parentUiSchema._id : null;
 
     const renderer = uiSchema.map((item: IUISchemaItem) => {
       const Component = getComponent(item.component);
@@ -41,9 +46,10 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
         key: item._id,
         itemKey: item._id,
         gridKey,
-        onRemove: () => {
+        onRemove: (itemKey, gridKey) => {
+          this.removeComponent(itemKey, gridKey)
         }
-      }
+      };
 
       if (isValidUISchema(item.props.children)) {
         return (
@@ -59,17 +65,22 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
       } else {
         return (
           <GridItem {...gridItemProps}>
-            <Component key={item._id} {...nextProps}/>
+            <Component key={item._id} {...nextProps}>
+              {item.props.children && Array.isArray(item.props.children) ? <GridTarget targetKey={item._id}/> : null}
+            </Component>
           </GridItem>
         )
       }
     });
 
-    return (
+    return parentUiSchema ? (
       <GridTarget targetKey={gridKey}>
         <Grid {...getLayout(parentUiSchema, layoutSchema, this.context.layout.activeGrid)}
+              gridKey={gridKey}
               onChange={this.handleGridChange}>{renderer}</Grid>
       </GridTarget>
-    )
+    ) : (<Grid {...getLayout(parentUiSchema, layoutSchema, this.context.layout.activeGrid)}
+               gridKey={gridKey}
+               onChange={this.handleGridChange}>{renderer}</Grid>)
   }
 }

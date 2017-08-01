@@ -7,7 +7,7 @@ const Item: any = styled.div`// styled
     border: ${(props: any )=> props.active ? '1px solid #cccccc' : '1px solid transparent'};
     user-select: none;
     cursor: ${(props: any )=> props.move ? 'move' : 'default'};
-    height: 100%;
+    height: ${(props: any) => props.itemKey === 'root' ? '100% !important' : '100%'};
   }
 `;
 
@@ -61,11 +61,12 @@ export class GridItem extends React.Component<any, any> {
     const { overItemKeys, activeItem } = this.context.layout;
 
     const currentOverKey = overItemKeys && overItemKeys.length > 0 ? overItemKeys[overItemKeys.length - 1] : null;
-    const canMove = this.props.className && !( this.props.className && this.props.className.indexOf('static') > -1 )
-    const isActive = (currentOverKey === itemKey && activeItem !== itemKey || activeItem === itemKey) && itemKey !== 'root'
+    const canMove = this.props.className && !( this.props.className && this.props.className.indexOf('static') > -1 );
+    const isActive = (currentOverKey === itemKey && activeItem !== itemKey || activeItem === itemKey) && itemKey !== 'root';
 
     return (
       <Item
+        itemKey={itemKey}
         onMouseOver={this.onHover.bind(this)}
         onClick={this.onClick.bind(this)}
         active={isActive}

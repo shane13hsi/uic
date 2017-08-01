@@ -4,7 +4,10 @@ import { IUISchemaItem } from '../../uischema-to-jsx/interfaces';
 // calculate the children's layout
 export function getLayout(uiSchema: IUISchemaItem, layoutSchema: any, activeGrid?: string) {
   if (!uiSchema) {
-    return { layout: [merge({}, layoutSchema['root'].layout, { i: 'root' })], options: layoutSchema['root'].options }
+    return {
+      layout: [merge({}, layoutSchema['root'].layout, { i: 'root', static: true })],
+      options: layoutSchema['root'].options
+    }
   }
   const { props } = uiSchema;
   const { children } = props;
@@ -27,7 +30,7 @@ export function getLayout(uiSchema: IUISchemaItem, layoutSchema: any, activeGrid
         // h: Math.max(resolvedHeight, layoutSchema[item._id].layout.h),
         h: layoutSchema[item._id].layout.h,
         i: item._id,
-        "static": activeGrid !== uiSchema._id
+        "static": activeGrid !== uiSchema._id || uiSchema._id === 'root'
       })
     });
 

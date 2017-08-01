@@ -9,6 +9,10 @@ const GridWrapper: any = styled.div`// styled
   & {
     position: relative;
     height: 100%;
+
+    .react-grid-layout {
+      height: ${(props: any) => props.gridKey === null ? '100% !important' : 'foo'}
+    }
   }
 `;
 
@@ -16,9 +20,6 @@ const GridWrapper: any = styled.div`// styled
 export class Grid extends React.Component<any, any> {
   constructor() {
     super();
-    this.state = {
-      showButton: false
-    }
   }
 
   static contextTypes = {
@@ -49,10 +50,10 @@ export class Grid extends React.Component<any, any> {
   }
 
   render() {
-    const { layout, cols = 12, rowHeight = 32, size, padding = [0, 0], margin = [0, 0] } = this.props;
+    const { layout, cols = 12, rowHeight = 32, size, padding = [0, 0], margin = [0, 0], gridKey } = this.props;
 
     return (
-      <GridWrapper>
+      <GridWrapper gridKey={gridKey}>
         <ReactGridLayout layout={layout}
                          cols={cols}
                          rowHeight={rowHeight}
