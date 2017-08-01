@@ -1,6 +1,5 @@
 import { action, extendObservable, observable, toJS } from 'mobx';
 import { provide } from '../../core/ioc';
-import { set } from 'lodash';
 import { db } from '../db/pouchdb';
 
 function InputSchema() {
@@ -110,9 +109,9 @@ export class $Canvas {
   }
 
   @action
-  async addComponent(type, target) {
+  async addComponent(schema, target) {
     let uiSchemaDoc = this.uiSchemaMap.get(this.activeId);
-    uiSchemaDoc.data[0].props.children.push(InputSchema());
+    uiSchemaDoc.data[0].props.children.push(schema);
 
     try {
       const res = await db.put(toJS(uiSchemaDoc));

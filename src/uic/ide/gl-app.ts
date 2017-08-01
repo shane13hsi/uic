@@ -2,7 +2,7 @@ import * as GoldenLayout from 'golden-layout';
 import { Canvas } from './canvas';
 import { PropertyForm } from './property-form';
 import { PageTree } from './page-tree';
-import { ComponentsList } from './components-list';
+import { ComponentList } from './component-list';
 import { lazyInject } from '../core/ioc';
 import { $Canvas } from './models/$canvas';
 import { runInAction } from 'mobx';
@@ -51,7 +51,7 @@ export class GLApp {
       this.glLayout.registerComponent('Canvas', Canvas);
       this.glLayout.registerComponent('PropertyForm', PropertyForm);
       this.glLayout.registerComponent('PageTree', PageTree);
-      this.glLayout.registerComponent('ComponentsList', ComponentsList);
+      this.glLayout.registerComponent('ComponentsList', ComponentList);
 
       this.glLayout.init();
 

@@ -8,7 +8,7 @@ export class $PageTree {
   @observable pageTree = [];
 
   @action
-  async loadPageTree(id: string) {
+  async load(id: string = 'pageList') {
     const doc = await db.get(id);
     this.pageTree = doc.pageList;
   }

@@ -18,7 +18,7 @@ export class PageTree extends React.Component<{}, {}> {
 
 
   componentDidMount() {
-    this.$pageTree.loadPageTree('pageList');
+    this.$pageTree.load();
   }
 
   @bind
