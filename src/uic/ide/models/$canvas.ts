@@ -3,6 +3,7 @@ import { provide } from '../../core/ioc';
 import * as _ from 'lodash';
 import { remove } from 'lodash';
 import { db } from '../db/pouchdb';
+import * as uuidv4 from 'uuid/v4';
 
 @provide($Canvas)
 export class $Canvas {
@@ -101,6 +102,7 @@ export class $Canvas {
       // 更新 _rev
       layoutSchemaDoc._rev = res.rev;
 
+      console.log('$canvas')
       this.layoutSchemaMap.set(this.activeId, layoutSchemaDoc);
     } catch (e) {
       // TODO: 更优的 pouchdb 更新
@@ -111,7 +113,7 @@ export class $Canvas {
   async addComponent(schema, target) {
     let uiSchemaDoc = this.uiSchemaMap.get(this.activeId);
     let nodeToAdd = findNodeOfTree(uiSchemaDoc.data, target);
-    nodeToAdd.props.children.push(_.assign(schema, { _id: String(Date.parse(new Date().toISOString())) }));
+    nodeToAdd.props.children.push(_.assign({}, schema, { _id: uuidv4() }));
 
     try {
       const res = await db.put(toJS(uiSchemaDoc));

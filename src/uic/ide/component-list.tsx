@@ -64,7 +64,15 @@ export class ComponentList extends React.Component<{}, {}> {
           <Item dropped={({ target }) => this.$canvas.addComponent(value.schema, target)}>
             <Popover onVisibleChange={this.handleVisibleChange}
                      placement="right"
-                     content={value.intro}
+                     content={
+                       <PopoverContent>
+                         {value.intro}
+                         <PreviewWrapper>
+                           <img src={value.thumbUrl}/>
+                         </PreviewWrapper>
+                       </PopoverContent>
+                     }
+                     visible={true}
                      title={value.title}>
               <ComponentIconWrapper>
                 {value.title}
@@ -112,3 +120,16 @@ const ComponentIconWrapper = styled.div`// styled
     }
   }
 `;
+
+const PopoverContent = styled.div`// styled
+  & {
+    width: 180px;
+  }
+`;
+
+const PreviewWrapper = styled.div`// styled
+  & {
+
+  }
+`;
+
