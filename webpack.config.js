@@ -68,5 +68,8 @@ module.exports = {
   },
   devServer: {
     compress: true,
+    stats: {
+      chunks: false,
+    }
   }
 };

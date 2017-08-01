@@ -26,7 +26,7 @@ export class PageTree extends React.Component<{}, {}> {
     if (e.node.props.isLeaf) {
       const { eventKey, title } = e.node.props;
       // 新建标签
-      GLApp.instance.addOrSetActiveWithinCanvas(eventKey, title);
+      GLApp.instance.addOrSetActiveCanvasTab(eventKey, title);
     }
   }
 

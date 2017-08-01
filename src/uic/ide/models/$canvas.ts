@@ -35,7 +35,7 @@ export class $Canvas {
 
   @action
   async loadUISchema(id: string) {
-    db.createIndex({
+    await db.createIndex({
       index: { fields: ['type', 'pageId'] },
       ddoc: "my-index-design-doc"
     });
@@ -51,7 +51,7 @@ export class $Canvas {
 
   @action
   async loadLayoutSchema(id: string) {
-    db.createIndex({
+    await db.createIndex({
       index: { fields: ['type', 'pageId'] },
       ddoc: "my-index-design-doc"
     });
@@ -62,6 +62,7 @@ export class $Canvas {
       },
       use_index: "my-index-design-doc"
     });
+    // TODO: layoutSchema 可不传兼容
     this.layoutSchemaMap.set(id, rtv.docs[0] || {
         data: {
           root: {
@@ -76,9 +77,11 @@ export class $Canvas {
   @action
   async updateLayoutSchema(layout: any[]) {
     let layoutSchemaDoc: any = this.layoutSchemaMap.get(this.activeId);
+
     if (Array.isArray(layout)) {
       layout.forEach(l => {
         const { x, y, w, h, i } = l;
+        // data 空则初始化
         if (layoutSchemaDoc.data[i] == null) {
           extendObservable(layoutSchemaDoc.data, {
             [i]: {
@@ -87,17 +90,22 @@ export class $Canvas {
           });
         }
 
+        // 更新 layout
         extendObservable(layoutSchemaDoc.data[i].layout, {
           x, y, w, h, "static": l.static
         });
 
       })
     }
+
     try {
       const res = await db.put(toJS(layoutSchemaDoc));
+      // 更新 _rev
       layoutSchemaDoc._rev = res.rev;
+
       this.layoutSchemaMap.set(this.activeId, layoutSchemaDoc);
     } catch (e) {
+      // TODO: 更优的 pouchdb 更新
     }
   }
 

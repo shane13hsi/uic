@@ -6,17 +6,13 @@ import { ComponentsList } from './components-list';
 import { lazyInject } from '../core/ioc';
 import { $Canvas } from './models/$canvas';
 import { runInAction } from 'mobx';
-
-// TODO: 放到 Pouchdb 里
-const LAYOUT_KEY = '$$uic_ide_layout';
-const CANVAS_TABS_KEY = '$$uic_ide_canvas_tabs';
-
-const defaultConfig = require('./models/gl-layout-default-config.json');
-
-const singleton = Symbol();
-const singletonEnforcer = Symbol();
+import { $GLApp, $IGLApp } from './models/$gl-app';
 
 type GoldenLayout2 = GoldenLayout & { on: any };
+
+// https://stackoverflow.com/questions/26205565/converting-singleton-js-objects-to-use-es6-classes
+const singleton = Symbol();
+const singletonEnforcer = Symbol();
 
 /**
  * 不使用 React 结合的方式，使用 singleton
@@ -31,13 +27,15 @@ export class GLApp {
   @lazyInject($Canvas)
   private $canvas: $Canvas;
 
+  @lazyInject($GLApp)
+  private $glApp: $IGLApp;
+
   public glLayout: GoldenLayout2;
 
   constructor(enforcer) {
     if (enforcer != singletonEnforcer) throw "Cannot construct singleton";
   }
 
-  // https://stackoverflow.com/questions/26205565/converting-singleton-js-objects-to-use-es6-classes
   static get instance(): GLApp {
     if (!this[singleton]) {
       this[singleton] = new GLApp(singletonEnforcer);
@@ -47,8 +45,9 @@ export class GLApp {
 
   public init() {
     if (this.glLayout == null) {
-      this.glLayout = (new GoldenLayout(this.config, '#golden-layout')) as GoldenLayout2;
+      this.glLayout = (new GoldenLayout(this.$glApp.getConfig(), '#golden-layout')) as GoldenLayout2;
 
+      // 注册 components
       this.glLayout.registerComponent('Canvas', Canvas);
       this.glLayout.registerComponent('PropertyForm', PropertyForm);
       this.glLayout.registerComponent('PageTree', PageTree);
@@ -56,24 +55,28 @@ export class GLApp {
 
       this.glLayout.init();
 
-
+      // 注册 event handlers
       $(window).resize(() => {
         this.glLayout.updateSize()
       });
 
+      // 保存 config
       this.glLayout.on('stateChanged', () => {
         if (this.glLayout.isInitialised) {
-          this.saveState(JSON.stringify(this.glLayout.toConfig()));
+          this.$glApp.saveConfigState(JSON.stringify(this.glLayout.toConfig()));
         }
       });
 
-      this.glLayout.on('itemDestroyed', (a) => {
-        this.removeCanvasMap(a.config.id);
-      });
 
       this.glLayout.on('initialised', () => {
         const canvas = this.getCanvasContentItem();
 
+        // 删除 canvas tabs
+        canvas.on('itemDestroyed', (a) => {
+          this.$glApp.removeCanvasTab(a.origin.config.id);
+        });
+
+        // 激活 tab 变化
         canvas.on('activeContentItemChanged', (a) => {
           const id = a.config.id;
           runInAction(() => {
@@ -83,6 +86,7 @@ export class GLApp {
           });
         });
 
+        // 如果有默认激活 tab，则初始化
         const item = canvas.getActiveContentItem();
 
         if (item == null) {
@@ -93,7 +97,7 @@ export class GLApp {
 
         // 更新 $canvas map
         runInAction(() => {
-          this.$canvas.initMapFromLS(this.getCanvasTabsFromLS());
+          this.$canvas.initMapFromLS(this.$glApp.getCanvasTabs());
           this.$canvas.setActiveId(id);
           this.$canvas.loadUISchema(id);
           this.$canvas.loadLayoutSchema(id);
@@ -101,34 +105,6 @@ export class GLApp {
 
       });
     }
-  }
-
-  private saveState(state) {
-    localStorage.setItem(LAYOUT_KEY, state);
-  }
-
-  private get config() {
-    const state = localStorage.getItem(LAYOUT_KEY);
-    return state == null ? defaultConfig : JSON.parse(state);
-  }
-
-  private getCanvasTabsFromLS(): Map<string, string> {
-    let state: string = localStorage.getItem(CANVAS_TABS_KEY);
-    let aMap: Map<string, string> = state == null ? new Map() : new Map(JSON.parse(state));
-    return aMap;
-  }
-
-  private setCanvasMap(id: string, title: string) {
-    const aMap = this.getCanvasTabsFromLS();
-    aMap.set(id, title);
-    // http://2ality.com/2015/08/es6-map-json.html
-    localStorage.setItem(CANVAS_TABS_KEY, JSON.stringify([...aMap]));
-  }
-
-  private removeCanvasMap(id: string) {
-    const aMap = this.getCanvasTabsFromLS();
-    aMap.delete(id);
-    localStorage.setItem(CANVAS_TABS_KEY, JSON.stringify([...aMap]));
   }
 
   private getCanvasContentItem() {
@@ -141,14 +117,14 @@ export class GLApp {
    * @param id
    * @param title
    */
-  public addOrSetActiveWithinCanvas(id: string, title: string) {
+  public addOrSetActiveCanvasTab(id: string, title: string) {
     const canvas = this.getCanvasContentItem();
 
-    if (this.getCanvasTabsFromLS().get(id) != null) {
+    if (this.$glApp.getCanvasTabs().get(id) != null) {
       const oldChild = canvas.getItemsById(id)[0];
       // 如果 title 变了
-      if (this.getCanvasTabsFromLS().get(id) != title) {
-        this.setCanvasMap(id, title);
+      if (this.$glApp.getCanvasTabs().get(id) != title) {
+        this.$glApp.setCanvasTab(id, title);
         oldChild.setTitle(title);
       }
       // set active
@@ -156,7 +132,7 @@ export class GLApp {
 
     } else {
       // add
-      this.setCanvasMap(id, title);
+      this.$glApp.setCanvasTab(id, title);
       canvas.addChild({
         id: id, // id 为设置 active 用
         title: title,
