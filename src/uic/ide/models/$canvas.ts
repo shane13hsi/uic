@@ -1,17 +1,8 @@
 import { action, extendObservable, observable, toJS } from 'mobx';
 import { provide } from '../../core/ioc';
+import * as _ from 'lodash';
 import { remove } from 'lodash';
 import { db } from '../db/pouchdb';
-
-function InputSchema() {
-  return {
-    "_id": String(Date.parse(new Date().toISOString())),
-    "component": "Card",
-    "props": {
-      "children": []
-    }
-  }
-}
 
 @provide($Canvas)
 export class $Canvas {
@@ -120,7 +111,7 @@ export class $Canvas {
   async addComponent(schema, target) {
     let uiSchemaDoc = this.uiSchemaMap.get(this.activeId);
     let nodeToAdd = findNodeOfTree(uiSchemaDoc.data, target);
-    nodeToAdd.props.children.push(schema);
+    nodeToAdd.props.children.push(_.assign(schema, { _id: String(Date.parse(new Date().toISOString())) }));
 
     try {
       const res = await db.put(toJS(uiSchemaDoc));
