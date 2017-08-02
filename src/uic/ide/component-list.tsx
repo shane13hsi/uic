@@ -68,11 +68,10 @@ export class ComponentList extends React.Component<{}, {}> {
                        <PopoverContent>
                          {value.intro}
                          <PreviewWrapper>
-                           <img src={value.thumbUrl}/>
+                           {value.thumbUrl != null ? <img src={value.thumbUrl}/> : null}
                          </PreviewWrapper>
                        </PopoverContent>
                      }
-                     visible={true}
                      title={value.title}>
               <ComponentIconWrapper>
                 {value.title}
@@ -129,7 +128,9 @@ const PopoverContent = styled.div`// styled
 
 const PreviewWrapper = styled.div`// styled
   & {
-
+    & > img {
+      width: 100px;
+    }
   }
 `;
 
