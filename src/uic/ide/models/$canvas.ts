@@ -1,7 +1,7 @@
 import { action, observable, toJS } from 'mobx';
 import { provide } from '../../core/ioc';
 import * as _ from 'lodash';
-import { findIndex, remove } from 'lodash';
+import { findIndex, maxBy, remove } from 'lodash';
 import { db } from '../db/pouchdb';
 import * as uuidv4 from 'uuid/v4';
 
@@ -106,8 +106,9 @@ export class $Canvas {
     let nodeToAdd = findNodeOfTree(uiSchemaDoc.data, target);
     const uuid = uuidv4()
     nodeToAdd.props.children.push(_.assign({}, schema, { _id: uuid }));
+    const lastOne = maxBy(layoutSchemaDoc.data, 'y');
     layoutSchemaDoc.data.push({
-      x: 0, y: 0, w: 12, h: 1, i: uuid, "static": false
+      x: 0, y: lastOne.y + lastOne.h, w: 12, h: 1, i: uuid, "static": false
     })
 
     try {

@@ -15,7 +15,6 @@ export class Canvas extends React.Component<{}, {}> {
   private $canvas: $Canvas;
 
   render() {
-    console.log('canvas')
     // TODO: 优化 render 次数
     const uiSchemaDoc = this.$canvas.uiSchemaMap.get(this.$canvas.activeId);
     const layoutSchemaDoc = this.$canvas.layoutSchemaMap.get(this.$canvas.activeId);
