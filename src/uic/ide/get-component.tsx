@@ -12,7 +12,6 @@ const Card = styled(AntCard)`// styled
 const Board = styled.div`// styled
   & {
     height: 100%;
-    background-color: #fefefe;
   }
 `;
 
