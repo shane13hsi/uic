@@ -11,23 +11,8 @@ export const uiSchema = [
             "children": [
               {
                 "component": "Input",
+                "binding": 'count',
                 "props": {
-                  "placeholder": "Username"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "component": "PropertyFormItem",
-          "props": {
-            "label": "count",
-            "tooltip": "star 总数",
-            "children": [
-              {
-                "component": "Input",
-                "props": {
-                  "placeholder": "Username"
                 }
               }
             ]
@@ -41,8 +26,8 @@ export const uiSchema = [
             "children": [
               {
                 "component": "Input",
+                "binding": 'value',
                 "props": {
-                  "placeholder": "Username"
                 }
               }
             ]
@@ -56,6 +41,7 @@ export const uiSchema = [
             "children": [
               {
                 "component": "Switch",
+                "binding": 'allowHalf',
                 "props": {}
               }
             ]
@@ -65,3 +51,16 @@ export const uiSchema = [
     }
   }
 ];
+
+export const formSchema = {
+  count: {
+    rules: 'required|string',
+  },
+  value: {
+    rules: 'required|string',
+
+  },
+  allowHalf: {
+    rules: 'required|boolean',
+  }
+};

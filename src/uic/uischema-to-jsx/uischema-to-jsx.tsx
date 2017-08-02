@@ -37,13 +37,21 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
 
 
   render() {
-    const { getComponent, uiSchema, parentUiSchema, data, handlers, layoutSchema } = this.props;
+    const { getComponent, uiSchema, parentUiSchema, data, handlers, layoutSchema, form } = this.props;
     const gridKey = parentUiSchema ? parentUiSchema._id : null;
     const activeGrid = this.context.layout ? this.context.layout.activeGrid : null;
 
     const renderer = uiSchema.map((item: IUISchemaItem, idx: number) => {
       const Component = getComponent(item.component);
-      const nextProps = replaceProps(item.props, data, handlers);
+      let nextProps = replaceProps(item.props, data, handlers);
+      if (item.binding != null) {
+        $ = form.$(item.binding).bind();
+        nextProps = Object.assign({}, nextProps || {}, {
+          value: $.value,
+          onChange: $.onChange,
+          onBlur: $.onBlur
+        });
+      }
       const gridItemProps = {
         key: item._id || idx,
         itemKey: item._id,
@@ -60,6 +68,7 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
               <UISchemaToJSX uiSchema={item.props.children}
                              parentUiSchema={item}
                              layoutSchema={layoutSchema}
+                             form={form}
                              getComponent={getComponent}/>
             </Component>
           </GridItem>

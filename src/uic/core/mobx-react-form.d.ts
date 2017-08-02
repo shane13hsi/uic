@@ -16,6 +16,8 @@ declare module '@uic/mobx-react-form' {
 
   export class Form {
 
+    constructor(a: any, b?: any);
+
     $(name: string): I$RV;
 
     onSubmit();
@@ -27,6 +29,8 @@ declare module '@uic/mobx-react-form' {
     init(fields: any);
 
     fields: Map<any, any>;
+
+    values: any;
   }
 
 }
