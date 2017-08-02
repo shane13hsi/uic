@@ -39,11 +39,11 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
     const { getComponent, uiSchema, parentUiSchema, data, handlers, layoutSchema } = this.props;
     const gridKey = parentUiSchema ? parentUiSchema._id : null;
 
-    const renderer = uiSchema.map((item: IUISchemaItem) => {
+    const renderer = uiSchema.map((item: IUISchemaItem, idx: number) => {
       const Component = getComponent(item.component);
       const nextProps = replaceProps(item.props, data, handlers);
       const gridItemProps = {
-        key: item._id,
+        key: item._id || idx,
         itemKey: item._id,
         gridKey,
         onRemove: (itemKey, gridKey) => {
@@ -54,7 +54,7 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
       if (isValidUISchema(item.props.children)) {
         return (
           <GridItem {...gridItemProps}>
-            <Component key={item._id} {...nextProps}>
+            <Component key={item._id || idx} {...nextProps}>
               <UISchemaToJSX uiSchema={item.props.children}
                              parentUiSchema={item}
                              layoutSchema={layoutSchema}
@@ -65,7 +65,7 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
       } else {
         return (
           <GridItem {...gridItemProps}>
-            <Component key={item._id} {...nextProps}>
+            <Component key={item._id || idx} {...nextProps}>
               {item.props.children && Array.isArray(item.props.children) ? <GridTarget targetKey={item._id}/> : null}
             </Component>
           </GridItem>
@@ -75,11 +75,11 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
 
     return parentUiSchema ? (
       <GridTarget targetKey={gridKey}>
-        <Grid {...getLayout(parentUiSchema, layoutSchema, this.context.layout.activeGrid)}
+        <Grid {...getLayout(parentUiSchema, layoutSchema, this.context.layout ? this.context.layout.activeGrid : null)}
               gridKey={gridKey}
               onChange={this.handleGridChange}>{renderer}</Grid>
       </GridTarget>
-    ) : (<Grid {...getLayout(parentUiSchema, layoutSchema, this.context.layout.activeGrid)}
+    ) : (<Grid {...getLayout(parentUiSchema, layoutSchema, this.context.layout ? this.context.layout.activeGrid : null)}
                gridKey={gridKey}
                onChange={this.handleGridChange}>{renderer}</Grid>)
   }

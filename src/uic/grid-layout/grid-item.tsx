@@ -58,7 +58,7 @@ export class GridItem extends React.Component<any, any> {
 
   render() {
     const { itemKey } = this.props;
-    const { overItemKeys, activeItem } = this.context.layout;
+    const { overItemKeys = null, activeItem = null } = this.context.layout ? this.context.layout : {};
 
     const currentOverKey = overItemKeys && overItemKeys.length > 0 ? overItemKeys[overItemKeys.length - 1] : null;
     const canMove = this.props.className && !( this.props.className && this.props.className.indexOf('static') > -1 );

@@ -30,9 +30,9 @@ export class PropertyForm extends React.Component<{}, {}> {
   render() {
     return (
       <Wrapper>
-        {/*<UISchemaToJSX uiSchema={uiSchema}
+        <UISchemaToJSX uiSchema={uiSchema}
                        layoutSchema={[]}
-                       getComponent={getComponent}/>*/}
+                       getComponent={getComponent}/>
       </Wrapper>
     )
   }

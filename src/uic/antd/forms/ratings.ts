@@ -1,11 +1,9 @@
 export const uiSchema = [
   {
-    "_id": "Form",
     "component": "Form",
     "props": {
       "children": [
         {
-          "_id": "PropertyFormItem_1",
           "component": "PropertyFormItem",
           "props": {
             "label": "count",
@@ -21,7 +19,6 @@ export const uiSchema = [
           }
         },
         {
-          "_id": "PropertyFormItem_2",
           "component": "PropertyFormItem",
           "props": {
             "label": "count",
@@ -37,7 +34,6 @@ export const uiSchema = [
           }
         },
         {
-          "_id": "PropertyFormItem_3",
           "component": "PropertyFormItem",
           "props": {
             "label": "value",
@@ -59,7 +55,8 @@ export const uiSchema = [
             "tooltip": "是否允许半选",
             "children": [
               {
-                "component": "Switch"
+                "component": "Switch",
+                "props": {}
               }
             ]
           }
