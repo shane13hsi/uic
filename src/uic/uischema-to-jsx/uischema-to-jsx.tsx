@@ -13,6 +13,7 @@ import { bind } from 'decko';
 const GridTarget = createTarget("grid-target");
 
 export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly<{}>> {
+
   @lazyInject($Canvas)
   private $canvas: $Canvas;
 

@@ -11,7 +11,7 @@ const GridWrapper: any = styled.div`// styled
     height: 100%;
 
     .react-grid-layout {
-      height: ${(props: any) => props.gridKey === null ? '100% !important' : 'foo'}
+      height: 'foo'
     }
   }
 `;
@@ -53,7 +53,7 @@ export class Grid extends React.Component<any, any> {
     const { layout, cols = 12, rowHeight = 32, size, padding = [0, 0], margin = [0, 0], gridKey } = this.props;
 
     return (
-      <GridWrapper gridKey={gridKey}>
+      <GridWrapper>
         <ReactGridLayout layout={layout}
                          cols={cols}
                          rowHeight={rowHeight}

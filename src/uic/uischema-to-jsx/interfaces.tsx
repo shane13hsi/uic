@@ -12,7 +12,10 @@ export type IReactProps = {
  */
 export interface IUISchemaItem {
 
-  _id: string;
+  /**
+   * 如果没有 layout 需求，可不必须
+   */
+  _id?: string;
   /**
    * component 名称
    *
