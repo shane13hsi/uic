@@ -1,11 +1,11 @@
-import 'jquery';
+declare var window: any;
+
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import * as Mobx from 'mobx';
 import { IDE } from './uic/ide/ide';
 import './uic/ide/db/pouchdb';
-import * as Mobx from 'mobx';
 
-declare var window: any;
 window.React = React;
 window.ReactDOM = ReactDOM;
 window.Mobx = Mobx;

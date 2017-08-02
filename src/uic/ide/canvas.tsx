@@ -12,12 +12,12 @@ import { getComponent } from './get-component';
 export class Canvas extends React.Component<{}, {}> {
 
   @lazyInject($Canvas)
-  private $canvas: $Canvas;
+  private _$canvas: $Canvas;
 
-  render() {
-    const uiSchema = this.$canvas.activeUISchema;
-    const layoutSchema = this.$canvas.activeLayoutSchema;
-    if (!GLApp.instance.glLayout.isInitialised) {
+  public render() {
+    const uiSchema = this._$canvas.activeUISchema;
+    const layoutSchema = this._$canvas.activeLayoutSchema;
+    if (!GLApp.instance.isInitialised()) {
       return <div/>
     }
     return (

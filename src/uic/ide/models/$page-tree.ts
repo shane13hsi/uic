@@ -5,10 +5,10 @@ import { provide } from '../../core/ioc';
 @provide($PageTree)
 export class $PageTree {
 
-  @observable pageTree = [];
+  @observable public pageTree = [];
 
   @action
-  async load(id: string = 'pageList') {
+  public async load(id: string = 'pageList') {
     const doc = await db.get(id);
     this.pageTree = doc.pageList;
   }

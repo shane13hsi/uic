@@ -18,29 +18,28 @@ export interface IComponent2 {
   value: IComponent[];
 }
 
-
 @provide($ComponentList)
 export class $ComponentList {
 
-  @observable private componentList = [];
+  @observable private _componentList = [];
   @observable private _activeKey;
   @observable private _initialised: boolean;
 
   @action
-  async load(id: string = 'componentList') {
+  public async load(id: string = 'componentList') {
     const doc = await db.get(id);
     this._initialised = true;
-    this.componentList = doc.data;
+    this._componentList = doc.data;
   }
 
   @action
-  changeActiveKey(key: string) {
+  public changeActiveKey(key: string) {
     this._activeKey = key;
   }
 
   @computed
   public get listByGroup(): IComponent2[] {
-    return _.chain(this.componentList)
+    return _.chain(this._componentList)
       .groupBy(item => item.groupId)
       .map((value, key) => ({
         groupId: value[0].groupId,

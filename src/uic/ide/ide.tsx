@@ -6,15 +6,13 @@ import HTML5Backend from 'react-dnd-html5-backend';
 @DragDropContext(HTML5Backend)
 export class IDE extends React.Component<{}, {}> {
 
-  componentDidMount() {
+  componentWillMount() {
     GLApp.instance.init();
   }
 
   render() {
     return (
-      <div>
-        <div id="golden-layout"></div>
-      </div>
+      <div id={GLApp.MOUNT_ID}/>
     )
   }
 }

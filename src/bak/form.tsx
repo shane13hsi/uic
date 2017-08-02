@@ -108,11 +108,11 @@ export class LoginForm extends React.Component<{}, {}> {
             xs: { span: 24, offset: 0 },
             sm: { span: 16, offset: 8 },
           }}>
-          <Button type="primary" onClick={this.form.onSubmit}>Submit</Button>
+          <Button type="primary" onClick={this.form.onSubmit} text="Submit"/>
           &nbsp;&nbsp;
-          <Button onClick={this.form.onReset}>Reset</Button>
+          <Button onClick={this.form.onReset} text="Reset"/>
           &nbsp;&nbsp;
-          <Button onClick={this.form.onClear}>Clear</Button>
+          <Button onClick={this.form.onClear} text="Clear"/>
         </Form.Item>
       </Form>
     )

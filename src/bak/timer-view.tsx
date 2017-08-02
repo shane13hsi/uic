@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { lazyInject, observable, observer, provide } from './uic';
+import { lazyInject, observable, observer, provide } from '../uic';
 
 @provide(App)
 class App {

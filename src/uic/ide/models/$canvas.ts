@@ -1,18 +1,18 @@
 import { action, computed, observable, toJS } from 'mobx';
-import { provide } from '../../core/ioc';
 import * as _ from 'lodash';
 import { findIndex, maxBy, remove } from 'lodash';
-import { db } from '../db/pouchdb';
 import * as uuidv4 from 'uuid/v4';
+import { provide } from '../../core/ioc';
+import { db } from '../db/pouchdb';
 
 @provide($Canvas)
 export class $Canvas {
 
-  @observable activeId: string;
-  @observable uiSchemaMap = new Map<string, any>();
-  @observable layoutSchemaMap = new Map<string, any>();
+  @observable public activeId: string;
+  @observable public uiSchemaMap = new Map<string, any>();
+  @observable public layoutSchemaMap = new Map<string, any>();
 
-  static readonly DEFAULT_UI_SCHEMA = [{
+  private static readonly DEFAULT_UI_SCHEMA = [{
     "_id": "root",
     "component": "Board",
     "props": {
@@ -20,7 +20,7 @@ export class $Canvas {
     }
   }];
 
-  static readonly DEFAULT_LAYOUT_SCHEMA = [
+  private static readonly DEFAULT_LAYOUT_SCHEMA = [
     { x: 0, y: 0, w: 12, h: 1, i: "root" }
   ];
 
@@ -37,19 +37,19 @@ export class $Canvas {
   }
 
   @action
-  initMapFromLS(map) {
+  public initMapFromLS(map) {
     for (let [key, _] of map) {
       this.uiSchemaMap.set(key, undefined);
     }
   }
 
   @action
-  setActiveId(activeId) {
+  public setActiveId(activeId) {
     this.activeId = activeId;
   }
 
   @action
-  async loadUISchema(id: string) {
+  public async loadUISchema(id: string) {
     await db.createIndex({
       index: { fields: ['type', 'pageId'] },
       ddoc: "my-index-design-doc"
@@ -73,7 +73,7 @@ export class $Canvas {
   }
 
   @action
-  async loadLayoutSchema(id: string) {
+  public async loadLayoutSchema(id: string) {
     await db.createIndex({
       index: { fields: ['type', 'pageId'] },
       ddoc: "my-index-design-doc"
@@ -92,7 +92,7 @@ export class $Canvas {
   }
 
   @action
-  async updateLayoutSchema(layout: any[]) {
+  public async updateLayoutSchema(layout: any[]) {
     let layoutSchemaDoc: any = this.layoutSchemaMap.get(this.activeId);
 
     if (Array.isArray(layout)) {
@@ -122,16 +122,16 @@ export class $Canvas {
   }
 
   @action
-  async addComponent(schema, target) {
+  public async addComponent(schema, target) {
     let uiSchemaDoc = this.uiSchemaMap.get(this.activeId);
     let layoutSchemaDoc: any = this.layoutSchemaMap.get(this.activeId);
-    let nodeToAdd = findNodeOfTree(uiSchemaDoc.data, target);
+    let nodeToAdd = this._findNodeOfTree(uiSchemaDoc.data, target);
     const uuid = uuidv4();
     nodeToAdd.props.children.push(_.assign({}, schema, { _id: uuid }));
     const lastOne: any = maxBy(layoutSchemaDoc.data, 'y');
     layoutSchemaDoc.data.push({
       x: 0, y: lastOne.y + lastOne.h, w: 12, h: 1, i: uuid, "static": false
-    })
+    });
 
     try {
       const res = await db.put(toJS(uiSchemaDoc));
@@ -149,10 +149,10 @@ export class $Canvas {
   }
 
   @action
-  async removeComponent(itemKey, gridKey) {
+  public async removeComponent(itemKey, gridKey) {
     let uiSchemaDoc = this.uiSchemaMap.get(this.activeId);
     let layoutSchemaDoc: any = this.layoutSchemaMap.get(this.activeId);
-    let grid = findNodeOfTree(uiSchemaDoc.data, gridKey);
+    let grid = this._findNodeOfTree(uiSchemaDoc.data, gridKey);
     let gridChildren = grid.props.children;
     remove(gridChildren, (i: any) => i._id === itemKey);
     remove(layoutSchemaDoc.data, (layout: any) => layout.id === itemKey);
@@ -171,19 +171,20 @@ export class $Canvas {
     } catch (e) {
     }
   }
-}
 
-function findNodeOfTree(tree, id) {
-  if (!tree) {
-    return {}
-  }
+  private _findNodeOfTree(tree, id) {
+    if (!tree) {
+      return {}
+    }
 
-  for (let i = 0; i < tree.length; i++) {
-    if (tree[i]._id === id) {
-      return tree[i]
-    } else if (tree[i].props.children && tree[i].props.children.length > 0) {
-      if (findNodeOfTree(tree[i].props.children, id)) {
-        return findNodeOfTree(tree[i].props.children, id)
+    for (let i = 0; i < tree.length; i++) {
+      if (tree[i]._id === id) {
+        return tree[i]
+      } else if (tree[i].props.children && tree[i].props.children.length > 0) {
+        const a = this._findNodeOfTree(tree[i].props.children, id);
+        if (a != null) {
+          return a;
+        }
       }
     }
   }

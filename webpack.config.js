@@ -66,6 +66,10 @@ module.exports = {
       }
     ]
   },
+  externals: {
+    "golden-layout": "GoldenLayout",
+    "$": "jQuery"
+  },
   devServer: {
     compress: true,
     stats: {

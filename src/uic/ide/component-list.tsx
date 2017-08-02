@@ -17,52 +17,52 @@ const Item = createItem("grid-target");
 
 @observer
 export class ComponentList extends React.Component<{}, {}> {
-  node: any;
+  private _node: any;
 
   @lazyInject($Canvas)
-  private $canvas: $Canvas;
+  private _$canvas: $Canvas;
 
   @lazyInject($ComponentList)
-  private $componentList: $ComponentList;
+  private _$componentList: $ComponentList;
 
   componentDidMount() {
-    this.$componentList.load();
+    this._$componentList.load();
   }
 
   /**
    * 处理下定位 left 距离，jQuery 配合 React 的 class 和 event handler 很灵活
    */
   @bind
-  handleVisibleChange() {
-    const width = findDOMNode(this.node).getBoundingClientRect().width;
+  private _handleVisibleChange() {
+    const width = findDOMNode(this._node).getBoundingClientRect().width;
     $('.ant-popover').css({ left: width });
   }
 
-  panelRenderer(listByGroup: IComponent2[]) {
+  private _panelRenderer(listByGroup: IComponent2[]) {
     return _.chain(listByGroup)
       .map((value: IComponent2) =>
         <Panel header={value.groupName} key={String(value.groupId)}>
-          {this.panelBodyRenderer(value.value)}
+          {this._panelBodyRenderer(value.value)}
         </Panel>)
       .value();
   }
 
-  panelBodyRenderer(componentList: IComponent[]) {
+  private _panelBodyRenderer(componentList: IComponent[]) {
     return _.chain(componentList)
       .chunk(3)
       .map((value, idx) =>
         <Row gutter={24} key={idx}>
-          {this.panelBodyLIneRender(value)}
+          {this._panelBodyLIneRender(value)}
         </Row>
       ).value();
   }
 
-  panelBodyLIneRender(componentList: IComponent[]) {
+  private _panelBodyLIneRender(componentList: IComponent[]) {
     return _.chain(componentList)
       .map((value: IComponent, idx: number) =>
         <Col span={6} key={idx}>
-          <Item dropped={({ target }) => this.$canvas.addComponent(value.schema, target)}>
-            <Popover onVisibleChange={this.handleVisibleChange}
+          <Item dropped={({ target }) => this._$canvas.addComponent(value.schema, target)}>
+            <Popover onVisibleChange={this._handleVisibleChange}
                      placement="right"
                      content={
                        <PopoverContent>
@@ -84,17 +84,17 @@ export class ComponentList extends React.Component<{}, {}> {
   }
 
   @bind
-  onChange(key: string) {
-    this.$componentList.changeActiveKey(key);
+  private _onChange(key: string) {
+    this._$componentList.changeActiveKey(key);
   }
 
-  render() {
+  public render() {
     return (
-      <Scroll ref={n => this.node = n}>
+      <Scroll ref={n => this._node = n}>
         <Collapse bordered={false}
-                  activeKey={toJS(this.$componentList.activeKey)}
-                  onChange={this.onChange}>
-          {this.panelRenderer(this.$componentList.listByGroup)}
+                  activeKey={toJS(this._$componentList.activeKey)}
+                  onChange={this._onChange}>
+          {this._panelRenderer(this._$componentList.listByGroup)}
         </Collapse>
       </Scroll>
     )
@@ -133,4 +133,3 @@ const PreviewWrapper = styled.div`// styled
     }
   }
 `;
-

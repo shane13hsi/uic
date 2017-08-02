@@ -14,30 +14,29 @@ const TreeNode = Tree.TreeNode;
 export class PageTree extends React.Component<{}, {}> {
 
   @lazyInject($PageTree)
-  private $pageTree: $PageTree;
+  private _$pageTree: $PageTree;
 
 
   componentDidMount() {
-    this.$pageTree.load();
+    this._$pageTree.load();
   }
 
   @bind
-  handleSelect(selectedKeys: any[], e: { selected: boolean, selectedNodes, node, event }) {
+  private _handleSelect(selectedKeys: any[], e: { selected: boolean, selectedNodes, node, event }) {
     if (e.node.props.isLeaf) {
       const { eventKey, title } = e.node.props;
-      // 新建标签
-      GLApp.instance.addOrSetActiveCanvasTab(eventKey, title);
+      GLApp.instance.setActiveCanvasTab(eventKey, title);
     }
   }
 
   @bind
-  treeNodeRender(treeList) {
+  private _treeNodeRenderer(treeList) {
     return treeList.map(item => {
       if (Array.isArray(item.children)) {
         return (
           <TreeNode title={item.title}
                     key={item.id}>
-            {this.treeNodeRender(item.children)}
+            {this._treeNodeRenderer(item.children)}
           </TreeNode>
         )
       } else {
@@ -46,12 +45,12 @@ export class PageTree extends React.Component<{}, {}> {
     });
   }
 
-  render() {
+  public render() {
     return (
       <Scroll>
         <Tree showLine
-              onSelect={this.handleSelect}>
-          {this.treeNodeRender(toJS(this.$pageTree.pageTree))}
+              onSelect={this._handleSelect}>
+          {this._treeNodeRenderer(toJS(this._$pageTree.pageTree))}
         </Tree>
       </Scroll>
     );

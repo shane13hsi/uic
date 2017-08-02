@@ -39,7 +39,7 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
   render() {
     const { getComponent, uiSchema, parentUiSchema, data, handlers, layoutSchema } = this.props;
     const gridKey = parentUiSchema ? parentUiSchema._id : null;
-    const activeGrid = this.context.layout ? this.context.layout.activeGrid : null
+    const activeGrid = this.context.layout ? this.context.layout.activeGrid : null;
 
     const renderer = uiSchema.map((item: IUISchemaItem, idx: number) => {
       const Component = getComponent(item.component);

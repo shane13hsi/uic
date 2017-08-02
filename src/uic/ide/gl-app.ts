@@ -25,14 +25,16 @@ const singletonEnforcer = Symbol();
 export class GLApp {
 
   @lazyInject($Canvas)
-  private $canvas: $Canvas;
+  private _$canvas: $Canvas;
 
   @lazyInject($GLApp)
-  private $glApp: $IGLApp;
+  private _$glApp: $IGLApp;
 
-  public glLayout: GoldenLayout2;
+  public static readonly MOUNT_ID = 'golden-layout';
 
-  constructor(enforcer) {
+  private _glLayout: GoldenLayout2;
+
+  private constructor(enforcer) {
     if (enforcer != singletonEnforcer) throw "Cannot construct singleton";
   }
 
@@ -44,87 +46,57 @@ export class GLApp {
   }
 
   public init() {
-    if (this.glLayout == null) {
-      this.glLayout = (new GoldenLayout(this.$glApp.getConfig(), '#golden-layout')) as GoldenLayout2;
+    if (this._glLayout == null) {
+      this._glLayout = (new GoldenLayout(this._$glApp.getConfig(), `#${GLApp.MOUNT_ID}`)) as GoldenLayout2;
 
       // 注册 components
-      this.glLayout.registerComponent('Canvas', Canvas);
-      this.glLayout.registerComponent('PropertyForm', PropertyForm);
-      this.glLayout.registerComponent('PageTree', PageTree);
-      this.glLayout.registerComponent('ComponentsList', ComponentList);
+      this._registerComponents();
 
-      this.glLayout.init();
+      this._glLayout.init();
 
       // 注册 event handlers
       $(window).resize(() => {
-        this.glLayout.updateSize()
+        this._glLayout.updateSize()
       });
 
       // 保存 config
-      this.glLayout.on('stateChanged', () => {
-        if (this.glLayout.isInitialised) {
-          this.$glApp.saveConfigState(JSON.stringify(this.glLayout.toConfig()));
-        }
-      });
+      this._saveOnStatedChanged();
 
-
-      this.glLayout.on('initialised', () => {
-        const canvas = this.getCanvasContentItem();
-
+      this._glLayout.on('initialised', () => {
+        const canvas = this._getCanvasContentItem();
         // 删除 canvas tabs
-        canvas.on('itemDestroyed', (a) => {
-          this.$glApp.removeCanvasTab(a.origin.config.id);
-        });
-
+        this._removeOnTabDestroyed(canvas);
         // 激活 tab 变化
-        canvas.on('activeContentItemChanged', (a) => {
-          const id = a.config.id;
-          runInAction(() => {
-            this.$canvas.setActiveId(id);
-            this.$canvas.loadUISchema(id);
-            this.$canvas.loadLayoutSchema(id);
-          });
-        });
-
+        this._reloadOnTabChanged(canvas);
         // 如果有默认激活 tab，则初始化
-        const item = canvas.getActiveContentItem();
-
-        if (item == null) {
-          return;
-        }
-
-        let id = Array.isArray(item.config.id) ? item.config.id[0] : item.config.id;
-
-        // 更新 $canvas map
-        runInAction(() => {
-          this.$canvas.initMapFromLS(this.$glApp.getCanvasTabs());
-          this.$canvas.setActiveId(id);
-          this.$canvas.loadUISchema(id);
-          this.$canvas.loadLayoutSchema(id);
-        });
-
+        this._initTab(canvas);
       });
     }
   }
 
-  private getCanvasContentItem() {
-    const canvas = this.glLayout.root.getItemsById('canvas')[0];
-    return canvas;
+  private _registerComponents() {
+    this._glLayout.registerComponent('ComponentsList', ComponentList);
+    this._glLayout.registerComponent('PageTree', PageTree);
+    this._glLayout.registerComponent('Canvas', Canvas);
+    this._glLayout.registerComponent('PropertyForm', PropertyForm);
+  }
+
+  public isInitialised(): boolean {
+    return this._glLayout.isInitialised;
   }
 
   /**
-   *
    * @param id
    * @param title
    */
-  public addOrSetActiveCanvasTab(id: string, title: string) {
-    const canvas = this.getCanvasContentItem();
+  public setActiveCanvasTab(id: string, title: string) {
+    const canvas = this._getCanvasContentItem();
 
-    if (this.$glApp.getCanvasTabs().get(id) != null) {
+    if (this._$glApp.getCanvasTabs().get(id) != null) {
       const oldChild = canvas.getItemsById(id)[0];
       // 如果 title 变了
-      if (this.$glApp.getCanvasTabs().get(id) != title) {
-        this.$glApp.setCanvasTab(id, title);
+      if (this._$glApp.getCanvasTabs().get(id) != title) {
+        this._$glApp.setCanvasTab(id, title);
         oldChild.setTitle(title);
       }
       // set active
@@ -132,7 +104,7 @@ export class GLApp {
 
     } else {
       // add
-      this.$glApp.setCanvasTab(id, title);
+      this._$glApp.setCanvasTab(id, title);
       canvas.addChild({
         id: id, // id 为设置 active 用
         title: title,
@@ -141,4 +113,50 @@ export class GLApp {
       });
     }
   }
+
+  private _getCanvasContentItem() {
+    const canvas = this._glLayout.root.getItemsById('canvas')[0];
+    return canvas;
+  }
+
+  private _initTab(canvas: GoldenLayout.ContentItem): void {
+    const item = canvas.getActiveContentItem();
+    if (item == null) {
+      return;
+    }
+    let id = Array.isArray(item.config.id) ? item.config.id[0] : item.config.id;
+    // 更新 _$canvas map
+    runInAction(() => {
+      this._$canvas.initMapFromLS(this._$glApp.getCanvasTabs());
+      this._$canvas.setActiveId(id);
+      this._$canvas.loadUISchema(id);
+      this._$canvas.loadLayoutSchema(id);
+    });
+  }
+
+  private _reloadOnTabChanged(canvas: GoldenLayout.ContentItem) {
+    canvas.on('activeContentItemChanged', (a) => {
+      const id = a.config.id;
+      runInAction(() => {
+        this._$canvas.setActiveId(id);
+        this._$canvas.loadUISchema(id);
+        this._$canvas.loadLayoutSchema(id);
+      });
+    });
+  }
+
+  private _removeOnTabDestroyed(canvas: GoldenLayout.ContentItem) {
+    canvas.on('itemDestroyed', (a) => {
+      this._$glApp.removeCanvasTab(a.origin.config.id);
+    });
+  }
+
+  private _saveOnStatedChanged() {
+    this._glLayout.on('stateChanged', () => {
+      if (this.isInitialised()) {
+        this._$glApp.saveConfigState(JSON.stringify(this._glLayout.toConfig()));
+      }
+    });
+  }
+
 }

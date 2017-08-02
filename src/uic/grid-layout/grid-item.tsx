@@ -20,7 +20,7 @@ const RootItem: any = styled(Item)`// styled
     linear-gradient(45deg, transparent 75%, #eee 75%),
     linear-gradient(-45deg, transparent 75%, #eee 75%);
   }
-`
+`;
 
 const RemoveIcon = styled.span`// styled
   & {
