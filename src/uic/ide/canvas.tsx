@@ -15,23 +15,11 @@ export class Canvas extends React.Component<{}, {}> {
   private $canvas: $Canvas;
 
   render() {
-    console.log('canvas')
-    // TODO: 优化 render 次数
-    const uiSchemaDoc = this.$canvas.uiSchemaMap.get(this.$canvas.activeId);
-    const layoutSchemaDoc = this.$canvas.layoutSchemaMap.get(this.$canvas.activeId);
-
-    let uiSchema = uiSchemaDoc ? uiSchemaDoc.data : null;
-    let layoutSchema = layoutSchemaDoc ? layoutSchemaDoc.data : null;
-
+    const uiSchema = this.$canvas.activeUISchema;
+    const layoutSchema = this.$canvas.activeLayoutSchema;
     if (!GLApp.instance.glLayout.isInitialised) {
       return <div/>
     }
-    // TODO: 由于请求的时候，会有 undefined 存在。
-    // 猜测在 golden layout 初始化时，uiSchema 已经加载好，layoutSchema 还没有
-    if (uiSchema == null || layoutSchema == null) {
-      return <div/>
-    }
-
     return (
       <GridLayoutContext>
         <UISchemaToJSX uiSchema={toJS(uiSchema)}

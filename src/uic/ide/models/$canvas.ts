@@ -1,4 +1,4 @@
-import { action, observable, toJS } from 'mobx';
+import { action, computed, observable, toJS } from 'mobx';
 import { provide } from '../../core/ioc';
 import * as _ from 'lodash';
 import { findIndex, remove } from 'lodash';
@@ -11,6 +11,30 @@ export class $Canvas {
   @observable activeId: string;
   @observable uiSchemaMap = new Map<string, any>();
   @observable layoutSchemaMap = new Map<string, any>();
+
+  static readonly DEFAULT_UI_SCHEMA = [{
+    "_id": "root",
+    "component": "Board",
+    "props": {
+      "children": []
+    }
+  }];
+
+  static readonly DEFAULT_LAYOUT_SCHEMA = [
+    { x: 0, y: 0, w: 12, h: 1, i: "root" }
+  ];
+
+  @computed
+  public get activeUISchema() {
+    const doc = this.uiSchemaMap.get(this.activeId);
+    return doc != null ? doc.data : $Canvas.DEFAULT_UI_SCHEMA;
+  }
+
+  @computed
+  public get activeLayoutSchema() {
+    const doc = this.layoutSchemaMap.get(this.activeId);
+    return doc != null ? doc.data : $Canvas.DEFAULT_LAYOUT_SCHEMA;
+  }
 
   @action
   initMapFromLS(map) {
@@ -63,9 +87,7 @@ export class $Canvas {
     });
     // TODO: layoutSchema 可不传兼容
     this.layoutSchemaMap.set(id, rtv.docs[0] || {
-        data: [
-          { x: 0, y: 0, w: 12, h: 1, i: "root" }
-        ]
+        data: $Canvas.DEFAULT_LAYOUT_SCHEMA
       });
   }
 
@@ -76,7 +98,7 @@ export class $Canvas {
     if (Array.isArray(layout)) {
       layout.forEach(l => {
         const { x, y, w, h, i } = l;
-        const index = findIndex(layoutSchemaDoc.data, { i })
+        const index = findIndex(layoutSchemaDoc.data, { i });
         if (index > -1) {
           layoutSchemaDoc.data[index] = {
             x, y, w, h, i, "static": l.static
@@ -104,11 +126,11 @@ export class $Canvas {
     let uiSchemaDoc = this.uiSchemaMap.get(this.activeId);
     let layoutSchemaDoc: any = this.layoutSchemaMap.get(this.activeId);
     let nodeToAdd = findNodeOfTree(uiSchemaDoc.data, target);
-    const uuid = uuidv4()
+    const uuid = uuidv4();
     nodeToAdd.props.children.push(_.assign({}, schema, { _id: uuid }));
     layoutSchemaDoc.data.push({
       x: 0, y: 0, w: 12, h: 1, i: uuid, "static": false
-    })
+    });
 
     try {
       const res = await db.put(toJS(uiSchemaDoc));
@@ -132,7 +154,7 @@ export class $Canvas {
     let grid = findNodeOfTree(uiSchemaDoc.data, gridKey);
     let gridChildren = grid.props.children;
     remove(gridChildren, (i: any) => i._id === itemKey);
-    remove(layoutSchemaDoc.data, (layout: any) => layout.id === itemKey)
+    remove(layoutSchemaDoc.data, (layout: any) => layout.id === itemKey);
 
     try {
       const res = await db.put(toJS(uiSchemaDoc));
