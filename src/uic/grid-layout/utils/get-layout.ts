@@ -1,13 +1,10 @@
-import { get, isEmpty, merge } from 'lodash';
+import { findIndex, get, isEmpty, merge } from 'lodash';
 import { IUISchemaItem } from '../../uischema-to-jsx/interfaces';
 
 // calculate the children's layout
 export function getLayout(uiSchema: IUISchemaItem, layoutSchema: any, activeGrid?: string) {
   if (!uiSchema) {
-    return {
-      layout: [merge({}, layoutSchema['root'].layout, { i: 'root', static: true })],
-      options: layoutSchema['root'].options
-    }
+    return { layout: [getLayoutByKey(layoutSchema, 'root', true)] }
   }
   const { props } = uiSchema;
   const { children } = props;
@@ -16,9 +13,9 @@ export function getLayout(uiSchema: IUISchemaItem, layoutSchema: any, activeGrid
   // let recalcOffset = 0;
   if (children && Array.isArray(children)) {
     let layout = children.map(item => {
-      if (isEmpty(layoutSchema[item._id])) {
-        return { x: 0, y: 0, w: 12, h: 1, static: activeGrid !== uiSchema._id, i: item._id }
-      }
+      // if (isEmpty(layoutSchema[item._id])) {
+      //   return { x: 0, y: 0, w: 12, h: 1, static: activeGrid !== uiSchema._id, i: item._id }
+      // }
       // let originHeight: number = get<any, number>(layoutSchema, [item._id, 'layout', 'h']);
       // let resolvedHeight = getChildrenHeight(item, layoutSchema);
       // if (resolvedHeight > originHeight) {
@@ -26,12 +23,7 @@ export function getLayout(uiSchema: IUISchemaItem, layoutSchema: any, activeGrid
       //   recalcBase = merge({}, layoutSchema[item._id].layout, { h: resolvedHeight, i: item._id });
       //   recalcOffset = resolvedHeight - originHeight
       // }
-      return merge({}, get(layoutSchema, [item._id, 'layout']), {
-        // h: Math.max(resolvedHeight, layoutSchema[item._id].layout.h),
-        h: layoutSchema[item._id].layout.h,
-        i: item._id,
-        "static": activeGrid !== uiSchema._id
-      })
+      return getLayoutByKey(layoutSchema, item._id, activeGrid !== uiSchema._id)
     });
 
     // if (recalc) {
@@ -45,10 +37,19 @@ export function getLayout(uiSchema: IUISchemaItem, layoutSchema: any, activeGrid
     //   });
     //   return Object.assign({ layout: newLayout }, get(layoutSchema, `${uiSchema._id}.options`));
     // } else {
-    return Object.assign({ layout }, get(layoutSchema, `${uiSchema._id}.options`));
+    return Object.assign({ layout });
     // }
   } else {
     return {}
+  }
+}
+
+function getLayoutByKey(layoutSchema, key, isStatic) {
+  const index = findIndex(layoutSchema, { i: key });
+  if (index === -1) {
+    return { x: 0, y: 0, w: 12, h: 1, static: isStatic, i: key }
+  } else {
+    return merge({}, layoutSchema[index], { static: isStatic })
   }
 }
 

@@ -1,7 +1,7 @@
-import { action, extendObservable, observable, toJS } from 'mobx';
+import { action, observable, toJS } from 'mobx';
 import { provide } from '../../core/ioc';
 import * as _ from 'lodash';
-import { remove } from 'lodash';
+import { findIndex, remove } from 'lodash';
 import { db } from '../db/pouchdb';
 import * as uuidv4 from 'uuid/v4';
 
@@ -63,13 +63,9 @@ export class $Canvas {
     });
     // TODO: layoutSchema 可不传兼容
     this.layoutSchemaMap.set(id, rtv.docs[0] || {
-        data: {
-          root: {
-            layout: {
-              x: 0, y: 0, w: 12, h: 1
-            }
-          }
-        }
+        data: [
+          { x: 0, y: 0, w: 12, h: 1, i: "root" }
+        ]
       });
   }
 
@@ -80,20 +76,16 @@ export class $Canvas {
     if (Array.isArray(layout)) {
       layout.forEach(l => {
         const { x, y, w, h, i } = l;
-        // data 空则初始化
-        if (layoutSchemaDoc.data[i] == null) {
-          extendObservable(layoutSchemaDoc.data, {
-            [i]: {
-              layout: {}
-            }
-          });
+        const index = findIndex(layoutSchemaDoc.data, { i })
+        if (index > -1) {
+          layoutSchemaDoc.data[index] = {
+            x, y, w, h, i, "static": l.static
+          }
+        } else {
+          layoutSchemaDoc.data.push({
+            x, y, w, h, i, "static": l.static
+          })
         }
-
-        // 更新 layout
-        extendObservable(layoutSchemaDoc.data[i].layout, {
-          x, y, w, h, "static": l.static
-        });
-
       })
     }
 
@@ -101,8 +93,6 @@ export class $Canvas {
       const res = await db.put(toJS(layoutSchemaDoc));
       // 更新 _rev
       layoutSchemaDoc._rev = res.rev;
-
-      console.log('$canvas')
       this.layoutSchemaMap.set(this.activeId, layoutSchemaDoc);
     } catch (e) {
       // TODO: 更优的 pouchdb 更新
@@ -112,8 +102,13 @@ export class $Canvas {
   @action
   async addComponent(schema, target) {
     let uiSchemaDoc = this.uiSchemaMap.get(this.activeId);
+    let layoutSchemaDoc: any = this.layoutSchemaMap.get(this.activeId);
     let nodeToAdd = findNodeOfTree(uiSchemaDoc.data, target);
-    nodeToAdd.props.children.push(_.assign({}, schema, { _id: uuidv4() }));
+    const uuid = uuidv4()
+    nodeToAdd.props.children.push(_.assign({}, schema, { _id: uuid }));
+    layoutSchemaDoc.data.push({
+      x: 0, y: 0, w: 12, h: 1, i: uuid, "static": false
+    })
 
     try {
       const res = await db.put(toJS(uiSchemaDoc));
@@ -121,18 +116,35 @@ export class $Canvas {
       this.uiSchemaMap.set(this.activeId, uiSchemaDoc);
     } catch (e) {
     }
+
+    try {
+      const res = await db.put(toJS(layoutSchemaDoc));
+      layoutSchemaDoc._rev = res.rev;
+      this.layoutSchemaMap.set(this.activeId, layoutSchemaDoc);
+    } catch (e) {
+    }
   }
 
   @action
   async removeComponent(itemKey, gridKey) {
     let uiSchemaDoc = this.uiSchemaMap.get(this.activeId);
+    let layoutSchemaDoc: any = this.layoutSchemaMap.get(this.activeId);
     let grid = findNodeOfTree(uiSchemaDoc.data, gridKey);
     let gridChildren = grid.props.children;
     remove(gridChildren, (i: any) => i._id === itemKey);
+    remove(layoutSchemaDoc.data, (layout: any) => layout.id === itemKey)
+
     try {
       const res = await db.put(toJS(uiSchemaDoc));
       uiSchemaDoc._rev = res.rev;
       this.uiSchemaMap.set(this.activeId, uiSchemaDoc);
+    } catch (e) {
+    }
+
+    try {
+      const res = await db.put(toJS(layoutSchemaDoc));
+      layoutSchemaDoc._rev = res.rev;
+      this.layoutSchemaMap.set(this.activeId, layoutSchemaDoc);
     } catch (e) {
     }
   }
