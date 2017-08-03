@@ -53,7 +53,7 @@ export class Grid extends React.Component<any, any> {
     const { layout, cols = 12, rowHeight = 32, size, padding = [0, 0], margin = [0, 0], gridKey } = this.props;
 
     return (
-      <GridWrapper >
+      <GridWrapper gridKey={gridKey}>
         <ReactGridLayout layout={layout}
                          cols={cols}
                          rowHeight={rowHeight}

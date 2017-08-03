@@ -46,7 +46,7 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
       const nextProps = replaceProps(item.props, data, handlers);
       const gridItemProps = {
         key: item._id || idx,
-        itemKey: item._id,
+        itemKey: item._id || idx,
         gridKey,
         onRemove: (itemKey, gridKey) => {
           this.removeComponent(itemKey, gridKey)
