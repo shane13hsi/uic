@@ -172,4 +172,10 @@ export class $Canvas {
     } catch (e) {
     }
   }
+
+  @action
+  updateUISchema(id: any, values) {
+    const node = findNodeOfTree(this.activeUISchema, id);
+    node.props = values;
+  }
 }

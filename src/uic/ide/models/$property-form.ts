@@ -3,17 +3,9 @@ import { action, computed, observable, toJS } from 'mobx';
 import { Form as MobxReactForm } from '@uic/mobx-react-form';
 import * as validatorjs from 'validatorjs';
 import * as _ from 'lodash';
+import { lazyInject } from '../../index';
+import { $Canvas } from './$canvas';
 
-export class $Form extends MobxReactForm {
-
-  plugins() {
-    return {
-      dvr: {
-        package: validatorjs // 暂时有的是 DVR
-      },
-    };
-  }
-}
 
 @provide($PropertyForm)
 export class $PropertyForm {
@@ -34,7 +26,7 @@ export class $PropertyForm {
   }
 
   @action
-  public setForm(id, component, propsSchema, props) {
+  public setForm(id, propsSchema, props) {
     console.log('setForm')
     // props 要重新设计
     // type 获取，经过适当的转换
@@ -44,7 +36,7 @@ export class $PropertyForm {
       return;
     } else {
       this._setSchema(id, propsSchema);
-      const form = new $Form({ fields: toJS(this._formSchemaMap.get(id)) }, { name: `${component}_${id}` })
+      const form = new $Form({ fields: toJS(this._formSchemaMap.get(id)), values: props }, { name: id });
       this._formMap.set(id, form);
     }
   }
@@ -78,4 +70,49 @@ export class $PropertyForm {
     }]);
   }
 
+}
+
+
+@provide($Form)
+export class $Form extends MobxReactForm {
+
+  @lazyInject($Canvas)
+  private $canvas: $Canvas;
+
+  plugins() {
+    return {
+      dvr: {
+        package: validatorjs // 暂时有的是 DVR
+      },
+    };
+  }
+
+  private _onChange = (field) => (e) => {
+    e.preventDefault();
+    field.onChange(e);
+    const form = field.state.form;
+    this.$canvas.updateUISchema(form.name, form.values())
+  };
+
+  bindings() {
+    return {
+      MyCustomInput: ({ $try, field, props }) => ({
+        type: $try(props.type, field.type),
+        id: $try(props.id, field.id),
+        name: $try(props.name, field.name),
+        value: $try(props.value, field.value),
+        floatingLabelText: $try(props.label, field.label),
+        hintText: $try(props.placeholder, field.placeholder),
+        errorText: $try(props.error, field.error),
+        disabled: $try(props.disabled, field.disabled),
+        onChange: $try(props.onChange, this._onChange(field)),
+        onFocus: $try(props.onFocus, field.onFocus),
+        onBlur: $try(props.onBlur, field.onBlur),
+      })
+    }
+  }
+
+  onInit() {
+    this.each(field => field.set('bindings', 'MyCustomInput'));
+  }
 }

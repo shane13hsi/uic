@@ -35,26 +35,18 @@ export class PropertyForm extends React.Component<{}, {}> {
 
   public render() {
     if (this.$propertyForm.form == null) return <div/>;
+    this.$propertyForm.form.values();
     return (
       <Wrapper>
-        <PropertyForm2 form={this.$propertyForm.form}
-                       uiSchema={toJS(this.$propertyForm.uiSchema)}
-        />
+        <UISchemaToJSX uiSchema={toJS(this.$propertyForm.uiSchema)}
+                       layoutSchema={[]}
+                       form={this.$propertyForm.form}
+                       getComponent={getComponent}/>
       </Wrapper>
     )
   }
 }
 
-@observer
-export class PropertyForm2 extends React.Component<any, {}> {
-  render() {
-    const { form, uiSchema } = this.props;
-    return <UISchemaToJSX uiSchema={uiSchema}
-                          layoutSchema={[]}
-                          form={form}
-                          getComponent={getComponent}/>
-  }
-}
 
 const Wrapper = styled.div`// styled
   & {

@@ -31,6 +31,8 @@ declare module '@uic/mobx-react-form' {
     fields: Map<any, any>;
 
     values: any;
+
+    each: any;
   }
 
 }

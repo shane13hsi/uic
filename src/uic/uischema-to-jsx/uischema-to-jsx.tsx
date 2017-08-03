@@ -70,7 +70,7 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
         },
         onClick1: () => {
           const propsSchema = this.$componentList.propsSchemaMap.get(item.component);
-          this.$propertyForm.setForm(item._id, item.component, propsSchema, item.props);
+          this.$propertyForm.setForm(item._id, propsSchema, item.props);
         }
       };
 
