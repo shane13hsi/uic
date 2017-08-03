@@ -10,6 +10,7 @@ export interface IComponent {
   title: string;
   intro: string;
   schema: any;
+  propsSchema: any;
 }
 
 export interface IComponent2 {
@@ -23,6 +24,10 @@ export class $ComponentList {
 
   @observable private _componentList = [];
   @observable private _activeKey;
+
+  /**
+   * 特殊处理 collapse 展开用（即 _activeKey）
+   */
   @observable private _initialised: boolean;
 
   @action
@@ -47,6 +52,15 @@ export class $ComponentList {
         value: value
       }))
       .value();
+  }
+
+  @computed
+  public get propsSchemaMap() {
+    let aMap = new Map<string, any>();
+    _.chain(this._componentList)
+      .each((item: IComponent) => aMap.set(item.name, item.propsSchema))
+      .value();
+    return aMap;
   }
 
   @computed

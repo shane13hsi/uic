@@ -10,12 +10,20 @@ import { createTarget } from '../grid-layout/utils/create-target';
 import { lazyInject } from '../core/ioc';
 import { $Canvas } from '../ide/models/$canvas';
 import { bind } from 'decko';
+import { $PropertyForm } from '../ide/models/$property-form';
+import { $ComponentList } from '../ide/models/$component-list';
 const GridTarget = createTarget("grid-target");
 
 export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly<{}>> {
 
   @lazyInject($Canvas)
   private $canvas: $Canvas;
+
+  @lazyInject($PropertyForm)
+  private $propertyForm: $PropertyForm;
+
+  @lazyInject($ComponentList)
+  private $componentList: $ComponentList;
 
   constructor(props, context) {
     super(props, context);
@@ -46,6 +54,7 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
       let nextProps = replaceProps(item.props, data, handlers);
       if (item.binding != null) {
         $ = form.$(item.binding).bind();
+        // TODO: onChange 放到一起
         nextProps = Object.assign({}, nextProps || {}, {
           value: $.value,
           onChange: $.onChange,
@@ -58,6 +67,10 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
         gridKey,
         onRemove: (itemKey, gridKey) => {
           this.removeComponent(itemKey, gridKey)
+        },
+        onClick1: () => {
+          const propsSchema = this.$componentList.propsSchemaMap.get(item.component);
+          this.$propertyForm.setForm(item._id, item.component, propsSchema, item.props);
         }
       };
 

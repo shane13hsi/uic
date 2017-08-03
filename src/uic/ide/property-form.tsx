@@ -3,10 +3,10 @@ import { Form, Input, Switch, UndefinedComponent } from '../antd/antd';
 import { PropertyFormItem } from './components/property-form-item';
 import styled from 'styled-components';
 import { UISchemaToJSX } from '../uischema-to-jsx/uischema-to-jsx';
-import { formSchema, uiSchema } from '../antd/forms/ratings';
 import { observer } from 'mobx-react';
 import { $PropertyForm } from './models/$property-form';
-import { observable } from 'mobx';
+import { lazyInject } from '../core/ioc';
+import { toJS } from 'mobx';
 
 const map = {
   Form,
@@ -30,30 +30,29 @@ function getComponent(name: string) {
  */
 @observer
 export class PropertyForm extends React.Component<{}, {}> {
-  @observable private _form: $PropertyForm;
+  @lazyInject($PropertyForm)
+  private $propertyForm: $PropertyForm;
 
-  componentDidMount() {
-    this._form = new $PropertyForm({
-      fields: formSchema, values: {
-        value: 4,
-        count: 5,
-        allowHalf: true
-      }
-    }, { name: '12345' });
-  }
-
-  //
   public render() {
-    if (this._form == null) return <div/>;
-    console.log(this._form.values());
+    if (this.$propertyForm.form == null) return <div/>;
     return (
       <Wrapper>
-        <UISchemaToJSX uiSchema={uiSchema}
-                       layoutSchema={[]}
-                       form={this._form}
-                       getComponent={getComponent}/>
+        <PropertyForm2 form={this.$propertyForm.form}
+                       uiSchema={toJS(this.$propertyForm.uiSchema)}
+        />
       </Wrapper>
     )
+  }
+}
+
+@observer
+export class PropertyForm2 extends React.Component<any, {}> {
+  render() {
+    const { form, uiSchema } = this.props;
+    return <UISchemaToJSX uiSchema={uiSchema}
+                          layoutSchema={[]}
+                          form={form}
+                          getComponent={getComponent}/>
   }
 }
 

@@ -50,6 +50,7 @@ export class GridItem extends React.Component<any, any> {
     if (layout) {
       e.stopPropagation();
       layout.setActiveItem(this.props.itemKey, this.props.gridKey)
+      this.props.onClick1();
     }
   }
 

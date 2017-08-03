@@ -12,8 +12,7 @@ export const uiSchema = [
               {
                 "component": "Input",
                 "binding": 'count',
-                "props": {
-                }
+                "props": {}
               }
             ]
           }
@@ -27,8 +26,7 @@ export const uiSchema = [
               {
                 "component": "Input",
                 "binding": 'value',
-                "props": {
-                }
+                "props": {}
               }
             ]
           }
