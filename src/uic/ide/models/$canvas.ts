@@ -130,7 +130,7 @@ export class $Canvas {
     nodeToAdd.props.children.push(_.assign({}, schema, { _id: uuid }));
     const lastOne: any = maxBy(layoutSchemaDoc.data, 'y');
     layoutSchemaDoc.data.push({
-      x: 0, y: lastOne.y + lastOne.h, w: 12, h: 1, i: uuid, "static": false
+      x: 0, y: lastOne ? (lastOne.y + lastOne.h) : 0, w: 12, h: 1, i: uuid, "static": false
     });
 
     try {
@@ -155,7 +155,7 @@ export class $Canvas {
     let grid = this._findNodeOfTree(uiSchemaDoc.data, gridKey);
     let gridChildren = grid.props.children;
     remove(gridChildren, (i: any) => i._id === itemKey);
-    remove(layoutSchemaDoc.data, (layout: any) => layout.id === itemKey);
+    remove(layoutSchemaDoc.data, (layout: any) => layout.i === itemKey);
 
     try {
       const res = await db.put(toJS(uiSchemaDoc));

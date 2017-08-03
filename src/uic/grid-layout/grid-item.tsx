@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const Item: any = styled.div`// styled
   & {
     text-align: center;
-    border: ${(props: any )=> props.active ? '1px solid #cccccc' : '1px solid transparent'};
+    border: ${(props: any )=> props.active ? '1px dashed #333' : '1px solid transparent'};
     user-select: none;
     cursor: ${(props: any )=> props.move ? 'move' : 'default'};
   }
