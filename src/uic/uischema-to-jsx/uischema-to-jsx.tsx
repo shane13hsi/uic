@@ -75,7 +75,7 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
       }
     });
 
-    return parentUiSchema ? (
+    return parentUiSchema && this.context.layout ? (
       <GridTarget targetKey={gridKey}>
         <Grid {...getLayout(parentUiSchema, layoutSchema, activeGrid)}
               gridKey={gridKey}

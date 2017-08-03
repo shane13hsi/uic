@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import sizeMe from 'react-sizeme';
 import * as ReactGridLayout from 'react-grid-layout';
 import { bind } from 'decko';
+import { merge } from 'lodash';
 
 const GridWrapper: any = styled.div`// styled
   & {
@@ -49,12 +50,20 @@ export class Grid extends React.Component<any, any> {
     }
   }
 
+  @bind
+  layoutWrapper(layout) {
+    if (!this.context.layout) {
+      return layout.map(l => merge({}, l, { static: true }))
+    }
+    return layout
+  }
+
   render() {
     const { layout, cols = 12, rowHeight = 32, size, padding = [0, 0], margin = [0, 0], gridKey } = this.props;
 
-    return (
+    return this.context.layout ? (
       <GridWrapper gridKey={gridKey}>
-        <ReactGridLayout layout={layout}
+        <ReactGridLayout layout={this.layoutWrapper(layout)}
                          cols={cols}
                          rowHeight={rowHeight}
                          width={size.width}
@@ -69,6 +78,6 @@ export class Grid extends React.Component<any, any> {
           {this.props.children}
         </ReactGridLayout>
       </GridWrapper>
-    )
+    ) : <div>{this.props.children}</div>
   }
 }
