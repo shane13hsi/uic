@@ -6,7 +6,7 @@ import { $Canvas } from './models/$canvas';
 import { lazyInject } from '../core/ioc';
 import { GLApp } from './gl-app';
 import { toJS } from 'mobx';
-import { getComponent } from './get-component';
+import { getComponent } from './utils/get-component';
 
 @observer
 export class Canvas extends React.Component<{}, {}> {

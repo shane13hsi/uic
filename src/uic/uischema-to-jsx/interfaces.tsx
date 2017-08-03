@@ -33,4 +33,6 @@ export interface IUISchemaItem {
    *
    */
   props: any & IReactProps;
+
+  binding?: string;
 }

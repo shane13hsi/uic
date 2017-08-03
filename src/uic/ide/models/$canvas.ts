@@ -4,6 +4,7 @@ import { findIndex, maxBy, remove } from 'lodash';
 import * as uuidv4 from 'uuid/v4';
 import { provide } from '../../core/ioc';
 import { db } from '../db/pouchdb';
+import { findNodeOfTree } from '../utils/find-node-of-tree';
 
 @provide($Canvas)
 export class $Canvas {
@@ -125,7 +126,7 @@ export class $Canvas {
   public async addComponent(schema, target) {
     let uiSchemaDoc = this.uiSchemaMap.get(this.activeId);
     let layoutSchemaDoc: any = this.layoutSchemaMap.get(this.activeId);
-    let nodeToAdd = this._findNodeOfTree(uiSchemaDoc.data, target);
+    let nodeToAdd = findNodeOfTree(uiSchemaDoc.data, target);
     const uuid = uuidv4();
     nodeToAdd.props.children.push(_.assign({}, schema, { _id: uuid }));
     const lastOne: any = maxBy(layoutSchemaDoc.data, 'y');
@@ -152,7 +153,7 @@ export class $Canvas {
   public async removeComponent(itemKey, gridKey) {
     let uiSchemaDoc = this.uiSchemaMap.get(this.activeId);
     let layoutSchemaDoc: any = this.layoutSchemaMap.get(this.activeId);
-    let grid = this._findNodeOfTree(uiSchemaDoc.data, gridKey);
+    let grid = findNodeOfTree(uiSchemaDoc.data, gridKey);
     let gridChildren = grid.props.children;
     remove(gridChildren, (i: any) => i._id === itemKey);
     remove(layoutSchemaDoc.data, (layout: any) => layout.i === itemKey);
@@ -172,20 +173,9 @@ export class $Canvas {
     }
   }
 
-  private _findNodeOfTree(tree, id) {
-    if (!tree) {
-      return {}
-    }
-
-    for (let i = 0; i < tree.length; i++) {
-      if (tree[i]._id === id) {
-        return tree[i]
-      } else if (tree[i].props.children && tree[i].props.children.length > 0) {
-        const a = this._findNodeOfTree(tree[i].props.children, id);
-        if (a != null) {
-          return a;
-        }
-      }
-    }
+  @action
+  updateUISchema(id: any, values) {
+    const node = findNodeOfTree(this.activeUISchema, id);
+    node.props = values;
   }
 }

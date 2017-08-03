@@ -31,4 +31,6 @@ export interface IUISchemaToJSXProps {
    * data
    */
   data?: any;
+
+  form?: any;
 }

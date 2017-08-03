@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as validatorjs from 'validatorjs';
-import { Button, Form, Input } from './uic/antd/antd';
-import { computed, lazyInject, MobxReactForm, observer, provide } from './uic';
+import { AButton, Button, Form, Input } from '../uic/antd/antd';
+import { Form as MobxReactForm } from 'mobx-react-form';
+import { observer } from 'mobx-react';
 
 const formItemLayout = {
   labelCol: {
@@ -14,109 +15,84 @@ const formItemLayout = {
   },
 };
 
-@provide($Form)
-class $Form extends MobxReactForm {
+const fields = [{
+  name: 'email',
+  label: 'Email',
+  placeholder: 'Insert Email',
+  rules: 'required|email|string|between:5,25',
+}, {
+  name: 'password',
+  label: 'Password',
+  placeholder: 'Insert Password',
+  rules: 'required|string|between:5,25',
+}];
 
-  plugins() {
-    return {
-      dvr: {
-        package: validatorjs
-      },
-    };
-  }
+const plugins = { dvr: validatorjs };
+
+class MyForm extends MobxReactForm {
 
   onSuccess(form) {
-    // alert('see console');
-    console.log('Form Values', form.values());
+    alert('Form is valid! Send the request here.');
+    // get field values
+    console.log('Form Values!', form.values());
   }
 
   onError(form) {
-    // alert('see console');
-    console.log('Form Errors', form.errors());
+    // get all form errors
+    console.log('All form errors', form.errors());
+    // invalidate the form with a custom error message
+    form.invalidate('This is a generic error message!');
   }
 }
 
-@provide($LoginForm)
-class $LoginForm extends $Form {
-
-  /**
-   * TODO: 使用 computed 值
-   *
-   * @param name
-   * @returns {any}
-   */
-  validateStatus(name: string) {
-    const f = this.$(name);
-    if (f.isPristine) {
-      return undefined;
-    } else if (f.validating) {
-      return 'validating';
-    } else if (f.isValid) {
-      return 'success';
-    } else {
-      return 'error';
-    }
-  }
-
-  @computed get isLoading() {
-    return this.fields.size === 0;
-  }
-}
+const form = new MyForm({ fields }, { plugins });
 
 @observer
 export class LoginForm extends React.Component<{}, {}> {
 
-  @lazyInject($LoginForm)
-  private form: $LoginForm;
-
   componentDidMount() {
-    this.form.init({
-      email: {
-        label: 'Email',
-        placeholder: 'Insert Email',
-        rules: 'required|email|string|between:5,25',
-      },
-      password: {
-        label: 'Password',
-        placeholder: 'Insert Password',
-        rules: 'required|string|between:5,25',
-      },
-    })
+
   }
 
   render() {
-    if (this.form.isLoading) return (<div>Loading</div>);
 
+    console.log(form.values)
     return (
-      <Form>
-        <Form.Item {...formItemLayout}
-                   label={this.form.$('email').label}
-                   help={this.form.$('email').error}
-                   validateStatus={this.form.validateStatus('email')}>
-          <Input {...this.form.$('email').bind()} />
-        </Form.Item>
+      <div>
+        <Form>
+          <Form.Item {...formItemLayout}
+                     label={form.$('email').label}
+                     help={form.$('email').error}>
+            <Input {...form.$('email').bind()} />
+          </Form.Item>
 
-        <Form.Item {...formItemLayout}
-                   label={this.form.$('password').label}
-                   help={this.form.$('password').error}
-                   validateStatus={this.form.validateStatus('password')}>
-          <Input {...this.form.$('password').bind({ type: 'password' })} />
-        </Form.Item>
+          <Form.Item {...formItemLayout}
+                     label={form.$('password').label}
+                     help={form.$('password').error}>
+            <Input {...form.$('password').bind({ type: 'password' })} />
+          </Form.Item>
 
-        <Form.Item
-          wrapperCol={{
-            xs: { span: 24, offset: 0 },
-            sm: { span: 16, offset: 8 },
-          }}>
-          <Button type="primary" onClick={this.form.onSubmit} text="Submit"/>
-          &nbsp;&nbsp;
-          <Button onClick={this.form.onReset} text="Reset"/>
-          &nbsp;&nbsp;
-          <Button onClick={this.form.onClear} text="Clear"/>
-        </Form.Item>
-      </Form>
+          <Form.Item
+            wrapperCol={{
+              xs: { span: 24, offset: 0 },
+              sm: { span: 16, offset: 8 },
+            }}>
+            <Button type="primary" onClick={form.onSubmit} text="Submit"></Button>
+            &nbsp;&nbsp;
+            <AButton onClick={form.onReset}>Reset</AButton>
+            &nbsp;&nbsp;
+            <AButton onClick={form.onClear}>Clear</AButton>
+          </Form.Item>
+        </Form>
+      </div>
     )
   }
 }
-
-
+//
+// MobxReactFormDevTools.register({
+//   $LoginForm,
+// });
+//
+// MobxReactFormDevTools.select('$LoginForm');
+//
+// MobxReactFormDevTools.open(true);

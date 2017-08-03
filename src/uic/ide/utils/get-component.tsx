@@ -1,4 +1,4 @@
-import { Button, Card as AntCard, Rate, UndefinedComponent } from '../antd/antd';
+import { Button, Card as AntCard, Rate, UndefinedComponent } from '../../antd/antd';
 import styled from 'styled-components';
 
 const Card = styled(AntCard)`// styled

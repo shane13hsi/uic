@@ -10,12 +10,20 @@ import { createTarget } from '../grid-layout/utils/create-target';
 import { lazyInject } from '../core/ioc';
 import { $Canvas } from '../ide/models/$canvas';
 import { bind } from 'decko';
+import { $PropertyForm } from '../ide/models/$property-form';
+import { $ComponentList } from '../ide/models/$component-list';
 const GridTarget = createTarget("grid-target");
 
 export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly<{}>> {
 
   @lazyInject($Canvas)
   private $canvas: $Canvas;
+
+  @lazyInject($PropertyForm)
+  private $propertyForm: $PropertyForm;
+
+  @lazyInject($ComponentList)
+  private $componentList: $ComponentList;
 
   constructor(props, context) {
     super(props, context);
@@ -37,19 +45,32 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
 
 
   render() {
-    const { getComponent, uiSchema, parentUiSchema, data, handlers, layoutSchema } = this.props;
+    const { getComponent, uiSchema, parentUiSchema, data, handlers, layoutSchema, form } = this.props;
     const gridKey = parentUiSchema ? parentUiSchema._id : null;
     const activeGrid = this.context.layout ? this.context.layout.activeGrid : null;
 
     const renderer = uiSchema.map((item: IUISchemaItem, idx: number) => {
       const Component = getComponent(item.component);
-      const nextProps = replaceProps(item.props, data, handlers);
+      let nextProps = replaceProps(item.props, data, handlers);
+      if (item.binding != null) {
+        $ = form.$(item.binding).bind();
+        // TODO: onChange 放到一起
+        nextProps = Object.assign({}, nextProps || {}, {
+          value: $.value,
+          onChange: $.onChange,
+          onBlur: $.onBlur
+        });
+      }
       const gridItemProps = {
         key: item._id || idx,
         itemKey: item._id || idx,
         gridKey,
         onRemove: (itemKey, gridKey) => {
           this.removeComponent(itemKey, gridKey)
+        },
+        onClick1: () => {
+          const propsSchema = this.$componentList.propsSchemaMap.get(item.component);
+          this.$propertyForm.setForm(item._id, propsSchema, item.props);
         }
       };
 
@@ -60,6 +81,7 @@ export class UISchemaToJSX extends React.Component<IUISchemaToJSXProps, Readonly
               <UISchemaToJSX uiSchema={item.props.children}
                              parentUiSchema={item}
                              layoutSchema={layoutSchema}
+                             form={form}
                              getComponent={getComponent}/>
             </Component>
           </GridItem>
