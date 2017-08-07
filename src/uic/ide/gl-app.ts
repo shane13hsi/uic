@@ -91,7 +91,6 @@ export class GLApp {
    */
   public setActiveCanvasTab(id: string, title: string) {
     const canvas = this._getCanvasContentItem();
-
     if (this._$glApp.getCanvasTabs().get(id) != null) {
       const oldChild = canvas.getItemsById(id)[0];
       // 如果 title 变了

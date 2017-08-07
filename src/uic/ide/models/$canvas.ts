@@ -62,6 +62,23 @@ export class $Canvas {
       },
       use_index: "my-index-design-doc"
     });
+
+    if (rtv.docs.length === 0) {
+      const rtv2 = await db.put({
+        "_id": id,
+        "type": "uiSchema",
+        "pageId": id,
+        "data": [{
+          "_id": "root",
+          "component": "Board",
+          "props": {
+            "children": []
+          }
+        }]
+      })
+    }
+
+
     this.uiSchemaMap.set(id, rtv.docs[0] || {
         data: [{
           "_id": "root",
@@ -86,6 +103,7 @@ export class $Canvas {
       },
       use_index: "my-index-design-doc"
     });
+
     // TODO: layoutSchema 可不传兼容
     this.layoutSchemaMap.set(id, rtv.docs[0] || {
         data: $Canvas.DEFAULT_LAYOUT_SCHEMA
@@ -173,9 +191,18 @@ export class $Canvas {
     }
   }
 
+
   @action
-  updateUISchema(id: any, values) {
-    const node = findNodeOfTree(this.activeUISchema, id);
+  public async updateUISchema(id: any, values) {
+    let uiSchemaDoc = this.uiSchemaMap.get(this.activeId);
+    const node = findNodeOfTree(uiSchemaDoc.data, id);
     node.props = values;
+    try {
+      const res = await db.put(toJS(uiSchemaDoc));
+      uiSchemaDoc._rev = res.rev;
+      this.uiSchemaMap.set(this.activeId, uiSchemaDoc);
+    } catch (e) {
+    }
+
   }
 }
