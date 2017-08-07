@@ -1,4 +1,4 @@
-import { findIndex, get, isEmpty, merge } from 'lodash';
+import { findIndex, merge } from 'lodash';
 import { IUISchemaItem } from '../../uischema-to-jsx/interfaces';
 
 // calculate the children's layout

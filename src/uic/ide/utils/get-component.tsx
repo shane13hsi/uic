@@ -1,5 +1,6 @@
-import { Button, Card as AntCard, Input, Rate, UndefinedComponent } from '../../antd/antd';
+import { Button, Card as AntCard, Form, Input, Rate, UndefinedComponent } from '../../antd/antd';
 import styled from 'styled-components';
+const FormItem = Form.Item;
 
 const Card = styled(AntCard)`// styled
   & {
@@ -20,7 +21,8 @@ const map = {
   Card,
   Board,
   Button,
-  Input
+  Input,
+  FormItem
 };
 
 export function getComponent(name: string) {

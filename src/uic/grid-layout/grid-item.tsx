@@ -33,6 +33,7 @@ const RemoveIcon = styled.span`// styled
     border-radius: 2px;
     z-index: 9999;
     cursor: pointer;
+    line-height: 16px;
   }
 `;
 
